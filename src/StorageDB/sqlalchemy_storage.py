@@ -104,16 +104,23 @@ class SQLAlchemyStorage(StorageInterface):
     async def init_db(self, **kwargs) -> None:
         """Initialize SQLAlchemy engine and session factory."""
         try:
-            # Create async engine with connection pooling
-            self._engine = create_async_engine(
-                self.database_url,
-                echo=self.echo,
-                pool_pre_ping=True,  # Verify connections before using
-                pool_recycle=3600,  # Recycle connections after 1 hour
-                pool_size=5,  # Max number of connections in pool
-                max_overflow=10,  # Max overflow connections beyond pool_size
-                pool_timeout=30  # Seconds to wait for connection from pool
-            )
+            is_sqlite = self.database_url.startswith("sqlite")
+
+            # SQLite (aiosqlite) uses StaticPool/NullPool and does NOT support
+            # pool_size or max_overflow — passing them raises ArgumentError.
+            engine_kwargs: dict = {
+                "echo": self.echo,
+                "pool_pre_ping": True,
+            }
+            if not is_sqlite:
+                engine_kwargs.update({
+                    "pool_recycle": 3600,
+                    "pool_size": 5,
+                    "max_overflow": 10,
+                    "pool_timeout": 30,
+                })
+
+            self._engine = create_async_engine(self.database_url, **engine_kwargs)
 
             # Create session factory
             self._session_factory = async_sessionmaker(
@@ -137,6 +144,32 @@ class SQLAlchemyStorage(StorageInterface):
             self.log.info("Tables created/verified.")
         except Exception as e:
             raise StorageError(f"Failed to create tables: {e}") from e
+
+    async def _migrate_add_encryption_columns(self) -> None:
+        """
+        Issue 5 fix: Safe migration for users upgrading from v0.1.5.
+
+        SQLAlchemy's create_all() only creates missing tables — it does NOT add
+        new columns to existing tables. Users who already have a messages.db
+        from v0.1.5 would get OperationalError without this migration.
+
+        Uses 'ALTER TABLE ... ADD COLUMN' with silent error swallowing because
+        SQLite does not support 'IF NOT EXISTS' on ADD COLUMN (pre-3.37.0).
+        """
+        from sqlalchemy import text
+
+        migration_sqls = [
+            "ALTER TABLE messages ADD COLUMN encrypted_message TEXT",
+            "ALTER TABLE messages ADD COLUMN encryption_nonce VARCHAR(255)",
+        ]
+        async with self._engine.begin() as conn:
+            for sql in migration_sqls:
+                try:
+                    await conn.execute(text(sql))
+                    self.log.debug(f"Migration applied: {sql}")
+                except Exception:
+                    # Column already exists — this is expected on fresh installs
+                    pass
 
     async def start_writer(self, **kwargs) -> None:
         """Start background task to consume queue and write batches."""
@@ -260,6 +293,9 @@ class SQLAlchemyStorage(StorageInterface):
         data_type = getattr(msg, 'data_type', None)
         direction = getattr(msg, 'direction', None)
         system_hit_time = getattr(msg, 'system_hit_time', 0.0)
+        # Issue 4 fix: map the new encryption fields added by the contributor
+        encrypted_message = getattr(msg, 'encrypted_message', None)
+        encryption_nonce = getattr(msg, 'encryption_nonce', None)
 
         parent_chat = getattr(msg, 'parent_chat', None)
         parent_chat_name = ''
@@ -271,6 +307,8 @@ class SQLAlchemyStorage(StorageInterface):
         return Message(
             message_id=str(message_id),
             raw_data=str(raw_data) if raw_data else '',
+            encrypted_message=encrypted_message,
+            encryption_nonce=encryption_nonce,
             data_type=str(data_type) if data_type else None,
             direction=str(direction) if direction else None,
             parent_chat_name=str(parent_chat_name),
@@ -390,6 +428,7 @@ class SQLAlchemyStorage(StorageInterface):
         """Async context manager entry."""
         await self.init_db()
         await self.create_table()
+        await self._migrate_add_encryption_columns()  # Issue 5 fix: safe upgrade migration
         await self.start_writer()
         return self
 
