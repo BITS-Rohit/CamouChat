@@ -8,50 +8,23 @@ version = "0.1.5"
 description = "Tweakio-SDK: WhatsApp automation Python library with anti-detection, async storage, and production-grade architecture"
 readme = "README.md"
 requires-python = ">=3.10"
-license = {text = "MIT"}
-authors = [
-    {name = "BITS-Rohit", email = "rohit@tweakio.dev"}
-]
-maintainers = [
-    {name = "BITS-Rohit", email = "rohit@tweakio.dev"}
-]
-keywords = [
-    "tweakio",
-    "tweakio-sdk",
-    "whatsapp",
-    "whatsapp-automation",
-    "whatsapp-bot",
-    "automation",
-    "playwright",
-    "web-automation",
-    "browser-automation",
-    "chatbot",
-    "messaging",
-    "anti-detection",
-    "camoufox"
-]
-classifiers = [
-    "Development Status :: 4 - Beta",
-    "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Topic :: Software Development :: Libraries :: Python Modules",
-    "Topic :: Communications :: Chat",
-]
+license = { text = "MIT" }
 
-# PRODUCTION DEPENDENCIES ONLY (users get these)
+authors = [{ name = "BITS-Rohit", email = "rohit@tweakio.dev" }]
+maintainers = [{ name = "BITS-Rohit", email = "rohit@tweakio.dev" }]
+
 dependencies = [
     "playwright>=1.40.0",
     "camoufox>=0.3.0",
     "pyperclip>=1.8.2",
     "cryptography>=41.0.0",
+    "colorlog>=6.10.1",
+    "sqlalchemy>=2.0.48",
+    "browserforge>=1.2.4",
+    "platformdirs>=4.9.2"
 ]
 
 [project.optional-dependencies]
-# DEVELOPMENT DEPENDENCIES (install with: pip install -e ".[dev]")
 dev = [
     "pytest>=7.4.0",
     "pytest-asyncio>=0.21.0",
@@ -60,41 +33,37 @@ dev = [
     "black>=23.0.0",
     "mypy>=1.5.0",
     "ruff>=0.0.290",
+    "deptry>=0.16.0"
 ]
 
 [project.urls]
 Homepage = "https://github.com/BITS-Rohit/tweakio-sdk"
 Repository = "https://github.com/BITS-Rohit/tweakio-sdk"
-Documentation = "https://github.com/BITS-Rohit/tweakio-sdk#readme"
-Issues = "https://github.com/BITS-Rohit/tweakio-sdk/issues"
-Changelog = "https://github.com/BITS-Rohit/tweakio-sdk/releases"
 
-# Setuptools configuration
 [tool.setuptools]
-package-dir = {"" = "src"}
+package-dir = { "" = "src" }
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
-# Pytest configuration
 [tool.pytest.ini_options]
 minversion = "7.0"
 testpaths = ["tests"]
-python_files = ["test_*.py"]
 asyncio_mode = "auto"
-addopts = ["-v", "--cov=src", "--cov-report=term-missing"]
 
-# Coverage configuration
 [tool.coverage.run]
 source = ["src"]
-omit = ["tests/*"]
 
-# Black formatter configuration
 [tool.black]
 line-length = 100
-target-version = ['py310']
+target-version = ["py310"]
 
-# Mypy type checker configuration
 [tool.mypy]
 python_version = "3.10"
 ignore_missing_imports = true
+
+[tool.deptry]
+ignore = ["DEP002"]
+
+[tool.deptry.per_rule_ignores]
+DEP001 = ["Quartz"]

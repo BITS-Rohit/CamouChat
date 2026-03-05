@@ -131,15 +131,15 @@ class BrowserForgeCompatible(BrowserForgeCapable):
         elif system == "Darwin":
             try:
                 import Quartz
+            except ImportError as e:
+                raise BrowserException("Quartz not available on macOS") from e
 
-                display = Quartz.CGMainDisplayID()
-                return (
-                    Quartz.CGDisplayPixelsWide(display),
-                    Quartz.CGDisplayPixelsHigh(display),
-                )
+            display = Quartz.CGMainDisplayID()
+            return (
+                Quartz.CGDisplayPixelsWide(display),
+                Quartz.CGDisplayPixelsHigh(display),
+            )
 
-            except Exception as e:
-                raise BrowserException("macOS screen size detection failed") from e
 
         # ---------------- Unsupported OS ----------------
         else:

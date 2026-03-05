@@ -5,7 +5,7 @@ import logging
 from logging.handlers import RotatingFileHandler
 
 from colorlog import ColoredFormatter
-import directory as dirs
+from src.directory  import DirectoryManager
 
 # ------ Logger Configs ---------
 logger = logging.getLogger("tweakio")
@@ -40,7 +40,7 @@ if not _has_stream_handler(logger):
 # File handler with rotation
 # -------------------------------
 file_handler = RotatingFileHandler(
-    dirs.ErrorTrace_file,  # file path
+    DirectoryManager().get_error_trace_file(),  # file path
     maxBytes=20 * 1024 * 1024,  # 20 MB per file
     backupCount=3  # keep last 3 files
 )
