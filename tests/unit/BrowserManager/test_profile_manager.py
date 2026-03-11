@@ -7,8 +7,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.resolve()))
 from src.BrowserManager.profile_manager import ProfileManager
 
 def test_profile_manager_manual():
-    from unittest.mock import Mock
-    
+
     pm = ProfileManager()
 
     print("Creating profiles...")
