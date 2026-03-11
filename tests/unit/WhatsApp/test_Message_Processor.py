@@ -7,9 +7,9 @@ import logging
 from unittest.mock import Mock, AsyncMock
 
 import pytest
-from playwright.async_api import Page, Locator, ElementHandle
+from playwright.async_api import Page, Locator
 
-from src.Exceptions import MessageNotFoundError, MessageListEmptyError, MessageProcessorError, WhatsAppError
+from src.Exceptions import MessageListEmptyError, MessageProcessorError, WhatsAppError
 from src.FIlter.message_filter import MessageFilter
 from src.Interfaces.storage_interface import StorageInterface
 from src.WhatsApp.DerivedTypes.Chat import whatsapp_chat

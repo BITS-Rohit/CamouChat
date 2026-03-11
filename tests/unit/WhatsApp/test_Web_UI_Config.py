@@ -3,7 +3,6 @@ Unit tests for WebSelectorConfig class.
 Tests cover locator construction and static helper methods.
 """
 
-import logging
 from unittest.mock import Mock, AsyncMock
 
 import pytest

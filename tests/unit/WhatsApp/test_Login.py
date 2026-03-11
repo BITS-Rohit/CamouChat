@@ -4,8 +4,7 @@ Tests cover QR login, Code-based login, and session management.
 """
 
 import logging
-from pathlib import Path
-from unittest.mock import Mock, AsyncMock, patch
+from unittest.mock import Mock, AsyncMock
 
 import pytest
 from playwright.async_api import Page, Locator, TimeoutError as PlaywrightTimeoutError, BrowserContext

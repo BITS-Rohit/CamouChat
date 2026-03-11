@@ -9,7 +9,7 @@ from unittest.mock import Mock, AsyncMock
 import pytest
 from playwright.async_api import Page, Locator, FileChooser, TimeoutError as PlaywrightTimeoutError
 
-from src.Exceptions.whatsapp import MediaCapableError, MenuError
+from src.Exceptions.whatsapp import MediaCapableError
 from src.Interfaces.media_capable_interface import MediaType, FileTyped
 from src.WhatsApp.media_capable import MediaCapable
 from src.WhatsApp.web_ui_config import WebSelectorConfig

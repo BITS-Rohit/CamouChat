@@ -12,8 +12,8 @@ from pathlib import Path
 # Add src to path (now we're in tests/unit/StorageDB/)
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent / "src"))
 
-from StorageDB import SQLAlchemyStorage
-from BrowserManager.profile_manager import ProfileManager
+from src.StorageDB import SQLAlchemyStorage
+from src.BrowserManager.profile_manager import ProfileManager
 
 # Configure logging
 logging.basicConfig(
@@ -106,7 +106,7 @@ async def test_profile_integration():
     print("\n📝 Creating test profile...")
     profile = pm.create_profile("whatsapp", "sqlalchemy_test")
     
-    print(f"\n📁 Profile paths:")
+    print("\n📁 Profile paths:")
     print(f"  - Profile dir: {profile.profile_dir}")
     print(f"  - Database path: {profile.database_path}")
     
@@ -119,7 +119,7 @@ async def test_profile_integration():
         batch_size=3
     )
     
-    print(f"\n✅ Created storage from profile:")
+    print("\n✅ Created storage from profile:")
     print(f"  - Database URL: {storage.database_url}")
     
     async with storage:
@@ -172,10 +172,11 @@ async def test_message_processor_compatibility():
         ]
         
         # MessageProcessor pattern: check exists, filter new, enqueue
-        new_msgs = [
-            msg for msg in messages
-            if not storage.check_message_if_exists(msg.message_id)
-        ]
+        new_msgs = []
+        for msg in messages:
+            exists = await storage.check_message_if_exists_async(msg.message_id)
+            if not exists:
+                new_msgs.append(msg)
         
         print(f"  - Total messages: {len(messages)}")
         print(f"  - New messages: {len(new_msgs)}")

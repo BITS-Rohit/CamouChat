@@ -6,7 +6,7 @@ Tests browser initialization, page management, and cleanup.
 import logging
 import sys
 from pathlib import Path
-from unittest.mock import Mock, AsyncMock, patch, MagicMock
+from unittest.mock import Mock, AsyncMock, patch
 
 import pytest
 from playwright.async_api import BrowserContext, Page

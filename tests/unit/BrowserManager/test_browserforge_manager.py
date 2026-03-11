@@ -7,10 +7,10 @@ import logging
 import pickle
 import sys
 from pathlib import Path
-from unittest.mock import Mock, patch, MagicMock, mock_open
+from unittest.mock import Mock, patch
 
 import pytest
-from browserforge.fingerprints import Fingerprint, FingerprintGenerator
+from browserforge.fingerprints import Fingerprint
 
 # Direct imports to avoid circular dependency
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))

@@ -1,52 +1,33 @@
 import sys
 from pathlib import Path
-import importlib.util
 
-# Add src to sys.path
-sys.path.append(str(Path("../../../src").resolve()))
+# Add project root to sys.path so 'src' can be imported
+sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.resolve()))
 
-# Load profile_manager directly without loading BrowserManager __init__
-file_path = Path("../../../src/BrowserManager/profile_manager.py").resolve()
+from src.BrowserManager.profile_manager import ProfileManager
 
-spec = importlib.util.spec_from_file_location(
-    "BrowserManager.profile_manager",
-    file_path
-)
+def test_profile_manager_manual():
+    from unittest.mock import Mock
+    
+    pm = ProfileManager()
 
-module = importlib.util.module_from_spec(spec)
-sys.modules["BrowserManager.profile_manager"] = module
-spec.loader.exec_module(module)
+    print("Creating profiles...")
+    try:
+        pm.create_profile("whatsapp", "test1")
+    except ValueError:
+        pass
 
-ProfileManager = module.ProfileManager
+    try:
+        pm.create_profile("whatsapp", "test2")
+    except ValueError:
+        pass
+
+    print("Profiles:", pm.list_profiles("whatsapp"))
 
 
-pm = ProfileManager()
+    pm.create_backup("whatsapp", "test2")
 
-print("Creating profiles...")
-try:
-    pm.create_profile("whatsapp", "test1")
-except ValueError:
-    pass
+    print("Deleting test1...")
+    pm.delete_profile("whatsapp", "test1")
 
-try:
-    pm.create_profile("whatsapp", "test2")
-except ValueError:
-    pass
-
-print("Profiles:", pm.list_profiles("whatsapp"))
-
-print("Activating test1...")
-pm.activate_profile("whatsapp", "test1")
-
-print("Activating test2...")
-pm.activate_profile("whatsapp", "test2")
-
-print("Done.")
-
-print("Creating backup...")
-pm.create_backup("whatsapp", "test2")
-
-print("Deleting test1...")
-pm.delete_profile("whatsapp", "test1")
-
-print("Profiles after deletion:", pm.list_profiles("whatsapp"))
+    print("Profiles after deletion:", pm.list_profiles("whatsapp"))

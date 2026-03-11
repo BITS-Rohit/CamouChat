@@ -4,7 +4,7 @@ Tests cover replying to messages and message selection.
 """
 
 import logging
-from unittest.mock import Mock, AsyncMock, call
+from unittest.mock import Mock, AsyncMock
 
 import pytest
 from playwright.async_api import Page, Locator, TimeoutError as PlaywrightTimeoutError, Position
