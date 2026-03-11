@@ -17,5 +17,4 @@ class MessageInterface(Protocol):
     message_ui: Optional[Union[ElementHandle, Locator]]
     message_id: Optional[str]
 
-
-def _message_key() -> str: ...
+    def _message_key(self) -> str: ...

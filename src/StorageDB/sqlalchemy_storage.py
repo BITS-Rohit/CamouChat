@@ -165,6 +165,9 @@ class SQLAlchemyStorage(StorageInterface):
             "ALTER TABLE messages ADD COLUMN encrypted_chat_name TEXT",
             "ALTER TABLE messages ADD COLUMN chat_name_nonce VARCHAR(255)",
         ]
+        if not self._engine:
+            return
+
         async with self._engine.begin() as conn:
             for sql in migration_sqls:
                 try:
@@ -346,7 +349,7 @@ class SQLAlchemyStorage(StorageInterface):
             self.log.error(f"Existence check failed: {e}")
             return False
 
-    async def check_message_if_exists_async(self, msg_id: str) -> bool:
+    async def check_message_if_exists_async(self, msg_id: str, **kwargs) -> bool:
         """Async version of existence check."""
         if not self._session_factory:
             return False
@@ -356,7 +359,7 @@ class SQLAlchemyStorage(StorageInterface):
             try:
                 stmt = select(exists().where(Message.message_id == msg_id))
                 result = await session.execute(stmt)
-                return result.scalar()
+                return result.scalar() or False
             except Exception as e:
                 self.log.error(f"Async existence check failed: {e}")
                 return False

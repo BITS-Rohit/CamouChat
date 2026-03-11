@@ -79,6 +79,19 @@ class StorageInterface(ABC):
         ...
 
     @abstractmethod
+    async def check_message_if_exists_async(self, msg_id: str, **kwargs) -> bool:
+        """
+        Check if a message exists by ID asynchronously.
+
+        Args:
+            msg_id: Message identifier
+
+        Returns:
+            True if message exists, False otherwise
+        """
+        ...
+
+    @abstractmethod
     def get_all_messages(self, **kwargs) -> List[Dict[str, Any]]:
         """
         Retrieve all messages from storage.

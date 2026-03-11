@@ -166,7 +166,7 @@ class MessageProcessor(MessageProcessorInterface):
         except WhatsAppError as e:
             raise MessageProcessorError("failed to wrap messages") from e
 
-    async def Fetcher(
+    async def Fetcher(  # type: ignore[override]
         self, chat: whatsapp_chat, retry: int, *args, **kwargs
     ) -> List[whatsapp_message]:
         """Fetch, optionally encrypt, store, and filter messages from a chat."""

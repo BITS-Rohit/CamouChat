@@ -25,7 +25,7 @@ class ChatProcessor(ChatProcessorInterface):
         if self.page is None:
             raise ValueError("page must not be None")
 
-    async def fetch_chats(self, limit: int = 5, retry: int = 5) -> List[whatsapp_chat]:
+    async def fetch_chats(self, limit: int = 5, retry: int = 5) -> List[whatsapp_chat]:  # type: ignore[override]
         """Fetch visible chats from the sidebar."""
         ChatList: List[whatsapp_chat] = await self._get_Wrapped_Chat(limit=limit, retry=retry)
 
@@ -34,20 +34,20 @@ class ChatProcessor(ChatProcessorInterface):
 
         return ChatList
 
-    async def _get_Wrapped_Chat(self, limit: int, retry: int) -> List[whatsapp_chat]:
+    async def _get_Wrapped_Chat(self, limit: int, retry: int) -> List[whatsapp_chat]:  # type: ignore[override]
         """Extract chat elements and wrap them as `whatsapp_chat` objects."""
         sc = self.UIConfig
         wrapped: List[whatsapp_chat] = []
         try:
             chats = sc.chat_items()
             counter = 0
-            while not (await chats.count()) and counter < retry:
+            while chats and not (await chats.count()) and counter < retry:
                 chats = sc.chat_items()
                 await self.page.wait_for_timeout(1000)
                 counter += 1
 
-            count = await chats.count()
-            if not count:
+            count = await chats.count() if chats else 0
+            if not count or not chats:
                 raise ChatNotFoundError("Chats Not Found.")
 
             minimum = min(count, limit)
@@ -61,16 +61,16 @@ class ChatProcessor(ChatProcessorInterface):
         except TweakioError as e:
             raise ChatProcessorError("Failed to extract chat") from e
 
-    async def _click_chat(self, chat: Optional[whatsapp_chat], **kwargs) -> bool:
+    async def _click_chat(self, chat: Optional[whatsapp_chat], **kwargs) -> bool:  # type: ignore[override]
         """Click on a chat to open it."""
         try:
             if not chat:
                 raise ChatNotFoundError("none passed , expected chat in click chat")
 
             handle: Optional[ElementHandle] = (
-                await chat.chatUI.element_handle(timeout=1500)
-                if isinstance(chat.chatUI, Locator)
-                else chat.chatUI if chat.chatUI is not None else None
+                await chat.chat_ui.element_handle(timeout=1500)
+                if isinstance(chat.chat_ui, Locator)
+                else chat.chat_ui if chat.chat_ui is not None else None
             )
 
             if handle is None:
@@ -93,9 +93,9 @@ class ChatProcessor(ChatProcessorInterface):
                 raise ChatNotFoundError("none passed , expected chat in is_unread")
 
             handle: ElementHandle = (
-                await chat.chatUI.element_handle(timeout=1500)
-                if isinstance(chat.chatUI, Locator)
-                else chat.chatUI
+                await chat.chat_ui.element_handle(timeout=1500)
+                if isinstance(chat.chat_ui, Locator)
+                else chat.chat_ui  # type: ignore[assignment]
             )
 
             unread_Badge = await handle.query_selector("[aria-label*='unread']")
@@ -118,12 +118,12 @@ class ChatProcessor(ChatProcessorInterface):
 
         try:
             chat_handle: ElementHandle = (
-                await chat.chatUI.element_handle(timeout=1500)
-                if isinstance(chat.chatUI, Locator)
-                else chat.chatUI
+                await chat.chat_ui.element_handle(timeout=1500)
+                if isinstance(chat.chat_ui, Locator)
+                else chat.chat_ui  # type: ignore[assignment]
             )
 
-            if chat.chatUI is None:
+            if chat.chat_ui is None:
                 raise ChatError("chat UI not initialized")
 
             await chat_handle.click(button="right")

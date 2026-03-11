@@ -12,11 +12,10 @@ import pytest
 from playwright.async_api import BrowserContext, Page
 
 # Direct imports to avoid circular dependency
-sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
-from src.BrowserManager import camoufox_browser
+from src.BrowserManager import camoufox_browser as cb_module
 from src.Exceptions import base
 
-CamoufoxBrowser = camoufox_browser.CamoufoxBrowser
+CamoufoxBrowser = cb_module.CamoufoxBrowser
 BrowserException = base.BrowserException
 
 

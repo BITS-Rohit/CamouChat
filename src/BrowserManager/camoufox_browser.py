@@ -86,7 +86,7 @@ class CamoufoxBrowser(BrowserInterface):
         fg: Fingerprint = self.BrowserForge.get_fg(profile_path=self.profileInfo.fingerprint_path)
 
         try:
-            self.browser = await AsyncCamoufox(
+            browser = await AsyncCamoufox(
                 **launch_options(
                     locale=self.config.locale,
                     headless=self.config.headless,
@@ -102,7 +102,8 @@ class CamoufoxBrowser(BrowserInterface):
                 user_data_dir=self.profileInfo.cache_dir,
             ).__aenter__()
 
-            return self.browser
+            self.browser = browser  # type: ignore[assignment]
+            return self.browser  # type: ignore[return-value]
 
         except camoufox.exceptions.InvalidIP:
             self.log.warning(f"Camoufox IP failed (attempt {tries}/5). Retrying...")

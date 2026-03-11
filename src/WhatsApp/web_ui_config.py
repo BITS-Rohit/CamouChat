@@ -209,6 +209,7 @@ class WebSelectorConfig(WebUISelectorCapable):
     @staticmethod
     async def is_message_out(message: Union[ElementHandle, Locator]) -> bool:
         """Returns True if the message is outgoing (sent by bot)."""
+        element: Union[ElementHandle, Locator, None]
         if isinstance(message, ElementHandle):
             element = await message.query_selector(".message-out")
         else:
@@ -373,10 +374,12 @@ class WebSelectorConfig(WebUISelectorCapable):
         return quoted
 
     @staticmethod
-    def get_QuotedText_handle(message: ElementHandle) -> str:
-        """Returns the handle for the quoted-mention span inside a quoted message."""
-        quoted = WebSelectorConfig.isQuotedText(message)
-        return quoted.is_visible() if quoted else ""
+    async def get_QuotedText_handle(message: ElementHandle) -> bool:
+        """Returns True if the quoted-mention span is visible inside a quoted message."""
+        quoted = await WebSelectorConfig.isQuotedText(message)
+        if quoted:
+            return await quoted.is_visible()
+        return False
 
     # -- System -- #
 

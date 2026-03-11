@@ -149,7 +149,7 @@ class Login(LoginInterface):
 
         return True
 
-    async def logout(self, state_dir: str) -> bool:
+    async def logout(self, state_dir: str, **kwargs) -> bool:  # type: ignore[override]
         """Clear session data from the specified directory."""
         try:
             path = Path(state_dir)
