@@ -9,9 +9,9 @@ from unittest.mock import Mock, AsyncMock, patch
 import pytest
 from playwright.async_api import BrowserContext, Page
 
-# Direct imports to avoid circular dependency
-from src.BrowserManager import camoufox_browser as cb_module
-from src.Exceptions import base
+
+from camouchat.BrowserManager import camoufox_browser as cb_module
+from camouchat.Exceptions import base
 
 CamoufoxBrowser = cb_module.CamoufoxBrowser
 BrowserException = base.BrowserException
@@ -84,7 +84,7 @@ def camoufox_browser(mock_browser_config, mock_profile_info, mock_logger):
     """Create CamoufoxBrowser instance with required dependencies."""
     return CamoufoxBrowser(
         config=mock_browser_config,
-        profileInfo=mock_profile_info,
+        profile=mock_profile_info,
         log=mock_logger,
     )
 
@@ -98,12 +98,12 @@ def test_init_success(mock_browser_config, mock_profile_info, mock_logger):
     """Test CamoufoxBrowser initializes with all required params."""
     browser = CamoufoxBrowser(
         config=mock_browser_config,
-        profileInfo=mock_profile_info,
+        profile=mock_profile_info,
         log=mock_logger,
     )
 
     assert browser.config == mock_browser_config
-    assert browser.profileInfo == mock_profile_info
+    assert browser.profile == mock_profile_info
     assert browser.BrowserForge == mock_browser_config.fingerprint_obj
     assert browser.log == mock_logger
 
@@ -113,7 +113,7 @@ def test_init_missing_logger(mock_browser_config, mock_profile_info):
     with pytest.raises(BrowserException, match="Logger is missing"):
         CamoufoxBrowser(
             config=mock_browser_config,
-            profileInfo=mock_profile_info,
+            profile=mock_profile_info,
             log=None,
         )
 
@@ -122,7 +122,7 @@ def test_init_missing_browserforge(mock_browser_config, mock_profile_info, mock_
     """Test CamoufoxBrowser raises error without BrowserForge."""
     mock_browser_config.fingerprint_obj = None
     with pytest.raises(BrowserException, match="BrowserForge is missing"):
-        CamoufoxBrowser(config=mock_browser_config, profileInfo=mock_profile_info, log=mock_logger)
+        CamoufoxBrowser(config=mock_browser_config, profile=mock_profile_info, log=mock_logger)
 
 
 def test_init_missing_cache_dir(mock_browser_config, mock_profile_info, mock_logger):
@@ -131,7 +131,7 @@ def test_init_missing_cache_dir(mock_browser_config, mock_profile_info, mock_log
     with pytest.raises(BrowserException, match="Cache dir path is missing"):
         CamoufoxBrowser(
             config=mock_browser_config,
-            profileInfo=mock_profile_info,
+            profile=mock_profile_info,
             log=mock_logger,
         )
 
@@ -142,7 +142,7 @@ def test_init_missing_fingerprint_path(mock_browser_config, mock_profile_info, m
     with pytest.raises(BrowserException, match="Fingerprint path is missing"):
         CamoufoxBrowser(
             config=mock_browser_config,
-            profileInfo=mock_profile_info,
+            profile=mock_profile_info,
             log=mock_logger,
         )
 

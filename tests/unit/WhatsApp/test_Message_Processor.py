@@ -10,7 +10,7 @@ import pytest
 from playwright.async_api import Page, Locator
 
 from src.Exceptions import MessageListEmptyError, MessageProcessorError, WhatsAppError
-from src.FIlter.message_filter import MessageFilter
+from src.Filter.message_filter import MessageFilter
 from src.Interfaces.storage_interface import StorageInterface
 from src.WhatsApp.DerivedTypes.Chat import whatsapp_chat
 from src.WhatsApp.DerivedTypes.Message import whatsapp_message

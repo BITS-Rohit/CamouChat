@@ -53,3 +53,4 @@ logger.addHandler(file_handler)
 # -------------------------------
 logger.propagate = False
 
+camouchatLogger = logger

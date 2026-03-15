@@ -9,11 +9,11 @@ import logging
 import sys
 from pathlib import Path
 
-# Add src to path (now we're in tests/unit/StorageDB/)
-sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent / "src"))
 
-from src.StorageDB import SQLAlchemyStorage
-from src.BrowserManager.profile_manager import ProfileManager
+sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent / "camouchat"))
+
+from camouchat.StorageDB import SQLAlchemyStorage
+from camouchat.BrowserManager.profile_manager import ProfileManager
 
 # Configure logging
 logging.basicConfig(

@@ -27,7 +27,11 @@ keywords = [
     "async",
     "sqlite",
     "postgresql",
-    "camouchat"
+    "camouchat",
+    "stealth",
+    "bypass",
+    "chat-bot",
+    "agents"
 ]
 
 classifiers = [

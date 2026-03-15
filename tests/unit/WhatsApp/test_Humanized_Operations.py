@@ -9,9 +9,9 @@ from unittest.mock import Mock, AsyncMock, patch
 import pytest
 from playwright.async_api import Page, Locator, TimeoutError as PlaywrightTimeoutError
 
-from src.Exceptions.base import ElementNotFoundError, HumanizedOperationError
-from src.WhatsApp.humanized_operations import HumanizedOperations
-from src.WhatsApp.web_ui_config import WebSelectorConfig
+from camouchat.Exceptions.base import ElementNotFoundError, HumanizedOperationError
+from camouchat.WhatsApp.humanized_operations import HumanizedOperations
+from camouchat.WhatsApp.web_ui_config import WebSelectorConfig
 
 # ============================================================================
 # FIXTURES

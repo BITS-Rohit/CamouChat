@@ -7,7 +7,7 @@ Tests for MessageEncryptor, MessageDecryptor, and KeyManager.
 import pytest
 import base64
 
-from src.Encryption import MessageEncryptor, MessageDecryptor, KeyManager
+from camouchat.Encryption import MessageEncryptor, MessageDecryptor, KeyManager
 
 
 class TestKeyManager:

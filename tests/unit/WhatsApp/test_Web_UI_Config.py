@@ -8,7 +8,7 @@ from unittest.mock import Mock, AsyncMock
 import pytest
 from playwright.async_api import Page, Locator, ElementHandle
 
-from src.WhatsApp.web_ui_config import WebSelectorConfig
+from camouchat.WhatsApp.web_ui_config import WebSelectorConfig
 
 # ============================================================================
 # FIXTURES
