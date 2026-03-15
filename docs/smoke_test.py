@@ -4,6 +4,15 @@ from camouchat.BrowserManager import BrowserForgeCompatible
 from camouchat.BrowserManager import ProfileManager
 from camouchat.BrowserManager import ProfileInfo
 
+# Added imports to group at top of file
+import asyncio
+from camouchat.BrowserManager import CamoufoxBrowser
+from camouchat.camouchat_logger import camouchatLogger
+from camouchat.WhatsApp import Login
+from camouchat.WhatsApp import WebSelectorConfig
+from camouchat.WhatsApp import ChatProcessor
+from camouchat.WhatsApp import MessageProcessor
+
 # Steps to automate platforms via camouchat.
 
 # Step 1  : Understand & Create a Profile from BrowserManager's ProfileManager
@@ -80,12 +89,9 @@ b_config = BrowserConfig.from_dict(bdict)
 # Remember we had a Platform class in BrowserManager , We can only make Bots | Agents for those platforms only.
 
 # Get the Browser obj.
-from camouchat.BrowserManager import CamoufoxBrowser
 # Import the CamoufoxBrowser , this is integrated & Customized for our camouchat usage.
 
-from camouchat.camouchat_logger import camouchatLogger
 # Import camouchatlogger from Custom_logger
-
 browser = CamoufoxBrowser(
     # It takes 3 parameter & All are REQUIRED PARAMETER:
 
@@ -112,13 +118,9 @@ page_obj = browser.get_page()
 # WhatsApp Platform Automation bot creating ------------
 
 # step 1 : login.
-import asyncio
-from camouchat.WhatsApp import Login
 
 # to work in any module you would need to pass on a UIConfig file.
 # that's the Core heart of the camouchat to talk to WhatsApp
-
-from camouchat.WhatsApp import WebSelectorConfig
 
 async def main():
     ui_config_obj = WebSelectorConfig(page=await page_obj, log=camouchatLogger)
@@ -177,21 +179,27 @@ if __name__ == "__main__":
 # Assuming you have already done Login into your account.
 
 async def chatprocessor():
-    from camouchat.WhatsApp import ChatProcessor
-    from camouchat.WhatsApp import WebSelectorConfig
-    from camouchat.WhatsApp import MessageProcessor
 
     C_processor = ChatProcessor(page=await page_obj, log=camouchatLogger, UIConfig=WebSelectorConfig(page=await page_obj, log=camouchatLogger))
     # All 3 are REQUIRED PARAMETER for ChatProcessor
 
-    M_processor = MessageProcessor()
+    _M_processor = MessageProcessor(
+        # Pass required arguments here if initializing
+        storage_obj=None,
+        filter_obj=None,
+        chat_processor=C_processor,
+        page=await page_obj,
+        log=camouchatLogger,
+        UIConfig=WebSelectorConfig(page=await page_obj, log=camouchatLogger)
+    )
 
     count = 1
     while True:
-        chats = await C_processor.fetch_chats()
+        _chats = await C_processor.fetch_chats()
         # Returns list of WhatsApp_chat
         count+=1
 
 
-        if count== 6 : break
+        if count == 6:
+            break
 
