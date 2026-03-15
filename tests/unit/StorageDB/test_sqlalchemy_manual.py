@@ -140,9 +140,10 @@ async def test_profile_integration():
     # Cleanup
     print("\n🧹 Cleaning up test profile...")
     import sys
+
     if sys.platform == "win32":
         await asyncio.sleep(1.0)  # Let windows release file hooks
-    
+
     # Ignore errors so it doesn't fail the build
     try:
         pm.delete_profile("whatsapp", "sqlalchemy_test", force=True)
