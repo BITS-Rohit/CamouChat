@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 from abc import ABC, abstractmethod
-from typing import List, Optional, TypeVar, Sequence
+from typing import List, Optional, TypeVar
 
 from playwright.async_api import Page
 
@@ -40,8 +40,6 @@ class MessageProcessorInterface(ABC):
         ...
 
     @abstractmethod
-    async def Fetcher(
-        self, chat: ChatInterface, retry: int, *args, **kwargs
-    ) -> List[T]:
+    async def Fetcher(self, chat: ChatInterface, retry: int, *args, **kwargs) -> List[T]:
         """Fetch messages from a chat with storage and filtering."""
         ...

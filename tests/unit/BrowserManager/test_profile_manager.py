@@ -1,11 +1,11 @@
 import sys
 from pathlib import Path
 
-
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.resolve()))
 
 from camouchat.BrowserManager.profile_manager import ProfileManager
 from camouchat.BrowserManager.platform_manager import Platform
+
 
 def test_profile_manager_manual():
     """Test full ProfileManager lifecycle: create, list, check existence, delete."""

@@ -11,5 +11,5 @@ __all__ = [
     "CamoufoxBrowser",
     "Platform",
     "ProfileInfo",
-    "ProfileManager"
+    "ProfileManager",
 ]

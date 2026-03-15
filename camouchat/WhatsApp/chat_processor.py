@@ -11,7 +11,12 @@ from playwright.async_api import Page, ElementHandle, Locator
 from playwright.async_api import TimeoutError as PlaywrightTimeoutError
 
 from camouchat.Exceptions import ChatNotFoundError, ChatClickError, TweakioError
-from camouchat.Exceptions.whatsapp import ChatProcessorError, ChatUnreadError, ChatMenuError, ChatError
+from camouchat.Exceptions.whatsapp import (
+    ChatProcessorError,
+    ChatUnreadError,
+    ChatMenuError,
+    ChatError,
+)
 from camouchat.Interfaces.chat_processor_interface import ChatProcessorInterface
 from camouchat.WhatsApp.DerivedTypes.Chat import whatsapp_chat
 from camouchat.WhatsApp.web_ui_config import WebSelectorConfig
@@ -24,7 +29,7 @@ class ChatProcessor(ChatProcessorInterface):
     _initialized: bool = False
 
     def __new__(cls, *args, **kwargs) -> ChatProcessor:
-        page = kwargs.get('page') or (args[0] if args else None)
+        page = kwargs.get("page") or (args[0] if args else None)
         if page is None:
             return super(ChatProcessor, cls).__new__(cls)
         if page not in cls._instances:
@@ -41,7 +46,7 @@ class ChatProcessor(ChatProcessorInterface):
             raise ValueError("page must not be None")
         self._initialized = True
 
-    async def fetch_chats(self, limit: int = 5, retry: int = 5) -> List[whatsapp_chat]:
+    async def fetch_chats(self, limit: int = 5, retry: int = 5) -> list[whatsapp_chat]:  # type: ignore[override]
         """Fetch visible chats from the sidebar."""
         ChatList: List[whatsapp_chat] = await self._get_Wrapped_Chat(limit=limit, retry=retry)
 
@@ -50,7 +55,7 @@ class ChatProcessor(ChatProcessorInterface):
 
         return ChatList
 
-    async def _get_Wrapped_Chat(self, limit: int, retry: int) -> List[whatsapp_chat]:
+    async def _get_Wrapped_Chat(self, limit: int, retry: int) -> list[whatsapp_chat]:  # type: ignore[override]
         """Extract chat elements and wrap them as `whatsapp_chat` objects."""
         sc = self.UIConfig
         wrapped: List[whatsapp_chat] = []
@@ -77,7 +82,7 @@ class ChatProcessor(ChatProcessorInterface):
         except TweakioError as e:
             raise ChatProcessorError("Failed to extract chat") from e
 
-    async def _click_chat(self, chat: Optional[whatsapp_chat], **kwargs) -> bool:
+    async def _click_chat(self, chat: Optional[whatsapp_chat], **kwargs) -> bool:  # type: ignore[override]
         """Click on a chat to open it."""
         try:
             if not chat:

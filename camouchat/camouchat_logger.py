@@ -2,6 +2,7 @@
 Shared Resources Module for tweakio-sdk library
 Supports separate loggers, contextual logging, and JSON formatting.
 """
+
 import logging
 import os
 import json
@@ -19,6 +20,7 @@ except ImportError:
 
 class JSONFormatter(logging.Formatter):
     """Formatter that outputs log records as JSON objects."""
+
     def format(self, record: logging.LogRecord) -> str:
         log_record = {
             "timestamp": self.formatTime(record, self.datefmt),
@@ -26,16 +28,16 @@ class JSONFormatter(logging.Formatter):
             "logger": record.name,
             "message": record.getMessage(),
         }
-        
+
         # Add contextual information if available
         if hasattr(record, "profile_id"):
             log_record["profile_id"] = record.profile_id
         if hasattr(record, "process_id"):
             log_record["process_id"] = record.process_id
-            
+
         if record.exc_info:
             log_record["exception"] = self.formatException(record.exc_info)
-            
+
         return json.dumps(log_record)
 
 
@@ -43,6 +45,7 @@ class TweakioLoggerAdapter(logging.LoggerAdapter):
     """
     Logger adapter that injects contextual information like profile_id and process_id.
     """
+
     def process(self, msg: Any, kwargs: Any) -> tuple[Any, Any]:
         extra = dict(self.extra) if self.extra else {}
         if "extra" in kwargs:
@@ -56,17 +59,26 @@ logger = logging.getLogger("tweakio")
 logger.setLevel(logging.INFO)
 logger.propagate = False  # Avoid duplication
 
+
 # ------ Logger Handlers --------
 def _has_stream_handler(lg: logging.Logger):
-    return any(isinstance(h, logging.StreamHandler) and not isinstance(h, logging.FileHandler)
-               for h in lg.handlers)
+    return any(
+        isinstance(h, logging.StreamHandler) and not isinstance(h, logging.FileHandler)
+        for h in lg.handlers
+    )
+
 
 def _has_file_handler(lg: logging.Logger):
     return any(isinstance(h, logging.FileHandler) for h in lg.handlers)
 
+
 # We use contextual formatting
-LOG_FORMAT = "%(asctime)s | %(levelname)s | [%(profile_id)s][%(process_id)s] | %(name)s | %(message)s"
-CONSOLE_FORMAT = "%(log_color)s%(asctime)s | %(levelname)s | [%(profile_id)s][%(process_id)s] | %(message)s"
+LOG_FORMAT = (
+    "%(asctime)s | %(levelname)s | [%(profile_id)s][%(process_id)s] | %(name)s | %(message)s"
+)
+CONSOLE_FORMAT = (
+    "%(log_color)s%(asctime)s | %(levelname)s | [%(profile_id)s][%(process_id)s] | %(message)s"
+)
 
 # -------------------------------
 # Console handler
@@ -75,12 +87,12 @@ if not _has_stream_handler(logger):
     console_formatter = ColoredFormatter(
         CONSOLE_FORMAT,
         log_colors={
-            'DEBUG': 'cyan',
-            'INFO': 'green',
-            'WARNING': 'yellow',
-            'ERROR': 'red',
-            'CRITICAL': 'bold_red'
-        }
+            "DEBUG": "cyan",
+            "INFO": "green",
+            "WARNING": "yellow",
+            "ERROR": "red",
+            "CRITICAL": "bold_red",
+        },
     )
 
     console_handler = logging.StreamHandler()
@@ -93,14 +105,12 @@ if not _has_stream_handler(logger):
 if not _has_file_handler(logger):
     log_file = DirectoryManager("CamouChat").get_error_trace_file()
     os.makedirs(os.path.dirname(log_file), exist_ok=True)
-    
+
     file_handler = ConcurrentRotatingFileHandler(
-        log_file,
-        maxBytes=20 * 1024 * 1024,  # 20 MB per file
-        backupCount=3  # keep last 3 files
+        log_file, maxBytes=20 * 1024 * 1024, backupCount=3  # 20 MB per file  # keep last 3 files
     )
-    
-    # We use standard formatting for the file by default. 
+
+    # We use standard formatting for the file by default.
     # JSONFormatter is available for advanced use cases.
     file_formatter = logging.Formatter(LOG_FORMAT)
     file_handler.setFormatter(file_formatter)
@@ -119,11 +129,9 @@ if not _has_stream_handler(_browser_logger):
 if not _has_file_handler(_browser_logger):
     b_log_file = DirectoryManager("CamouChat").get_browser_log_file()
     os.makedirs(os.path.dirname(b_log_file), exist_ok=True)
-    
+
     b_file_handler = ConcurrentRotatingFileHandler(
-        b_log_file,
-        maxBytes=20 * 1024 * 1024,
-        backupCount=3
+        b_log_file, maxBytes=20 * 1024 * 1024, backupCount=3
     )
     b_file_handler.setFormatter(logging.Formatter(LOG_FORMAT))
     _browser_logger.addHandler(b_file_handler)
@@ -133,12 +141,18 @@ if not _has_file_handler(_browser_logger):
 # -------------------------------
 # By default, use GLOBAL for profile if not specified to maintain backward compatibility.
 camouchatLogger = TweakioLoggerAdapter(logger, {"profile_id": "GLOBAL", "process_id": os.getpid()})
-browser_logger = TweakioLoggerAdapter(_browser_logger, {"profile_id": "GLOBAL", "process_id": os.getpid()})
+browser_logger = TweakioLoggerAdapter(
+    _browser_logger, {"profile_id": "GLOBAL", "process_id": os.getpid()}
+)
+
 
 def get_profile_logger(profile_id: str) -> logging.LoggerAdapter:
     """Returns a logger adapter configured for a specific profile_id."""
     return TweakioLoggerAdapter(logger, {"profile_id": profile_id, "process_id": os.getpid()})
 
+
 def get_browser_profile_logger(profile_id: str) -> logging.LoggerAdapter:
     """Returns a browser logger adapter configured for a specific profile_id."""
-    return TweakioLoggerAdapter(_browser_logger, {"profile_id": profile_id, "process_id": os.getpid()})
+    return TweakioLoggerAdapter(
+        _browser_logger, {"profile_id": profile_id, "process_id": os.getpid()}
+    )

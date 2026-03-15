@@ -12,6 +12,7 @@ class BrowserConfig:
     """
     Config dataclass for browser.
     """
+
     platform: Platform
     locale: str
     enable_cache: bool

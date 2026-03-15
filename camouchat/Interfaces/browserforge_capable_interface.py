@@ -6,7 +6,7 @@ to ensure realistic browser behavior and avoid detection.
 """
 
 from abc import ABC, abstractmethod
-from pathlib import Path
+from typing import Any
 
 from browserforge.fingerprints import Fingerprint
 
@@ -19,7 +19,7 @@ class BrowserForgeCapable(ABC):
     """
 
     @abstractmethod
-    def get_fg(self, profile_path: Path) -> Fingerprint:
+    def get_fg(self, profile: Any) -> Fingerprint:
         """
         Load or generate a fingerprint for the given profile.
 

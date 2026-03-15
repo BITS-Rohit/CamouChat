@@ -9,7 +9,7 @@ import re
 
 import weakref
 from playwright.async_api import Page, TimeoutError as PlaywrightTimeoutError, Locator
-from typing import Optional, Dict
+from typing import Optional
 from camouchat.Exceptions.whatsapp import LoginError
 from camouchat.Interfaces.login_interface import LoginInterface
 from camouchat.WhatsApp.web_ui_config import WebSelectorConfig
@@ -22,7 +22,7 @@ class Login(LoginInterface):
     _initialized: bool = False
 
     def __new__(cls, *args, **kwargs) -> Login:
-        page = kwargs.get('page') or (args[0] if args else None)
+        page = kwargs.get("page") or (args[0] if args else None)
         if page is None:
             return super(Login, cls).__new__(cls)
         if page not in cls._instances:
@@ -162,4 +162,3 @@ class Login(LoginInterface):
             raise LoginError("Timeout while waiting for login code.") from e
 
         return True
-

@@ -21,13 +21,12 @@ from camouchat.WhatsApp import MessageProcessor
 pm_obj = ProfileManager()
 
 # Create a Profile with a name u want to add for your profile
-work_profile : ProfileInfo  = pm_obj.create_profile(
-    platform= Platform.WHATSAPP,
-    #------------- This is a Required parameter -------------
+work_profile: ProfileInfo = pm_obj.create_profile(
+    platform=Platform.WHATSAPP,
+    # ------------- This is a Required parameter -------------
     # or Any Platform available in the Platform class
-
-    profile_id= "Work"
-    #------------- This is a Required parameter -------------
+    profile_id="Work",
+    # ------------- This is a Required parameter -------------
     # This is your profile name for that platform.
     # Also name is fixed and same platform cannot have same profile name.
     # Ex : "Work"  ,  "woRk"  would not work , they are considered as same.
@@ -43,20 +42,16 @@ which contains all the information your profile needs.
 
 bdict = {
     "platform": Platform.WHATSAPP,
-    #------------- This is Required Parameter -------------
+    # ------------- This is Required Parameter -------------
     # Use BrowserManager's Internal class for to give platform attribute anywhere.
-
     "locale": "en-Us",
     # Or ur side in case if ur Locale is different.
-
-    "enable_cache":False,
+    "enable_cache": False,
     # Generally not needed as True, But to save ram & resources usage make it False
-
-    "headless" : True ,
+    "headless": True,
     # Only use True if u want to see Browser working as visible UI.
     # but if Multiple Profiles are being activated it will be automatically set False to any more than 1 Browser.
-
-    "prefs" : {},
+    "prefs": {},
     # It is given for Experimental bases , Works same as Camoufox's Browser Prefs to give to Firefox
     # Accepts [str , bool] , For Simple purpose and stealth purpose passing Empty Dict is recommended
     # Ex: Prefs for Clipboard event will look like :
@@ -67,13 +62,11 @@ bdict = {
     #     #     "dom.allow_paste": True,
     #     #     "dom.events.testing.asyncClipboard": True,
     #     # }
-
-    "addons" : [],
+    "addons": [],
     # Accepts List[str] , the str should be the real zip download path of addons | Extensions download in ur system,
     # It loads those Extensions in the browser , Making Browser More stealth.
-
-    "fingerprint_obj" : BrowserForgeCompatible().get_fg(profile=work_profile)
-    #------------- This is a Required Parameter -------------
+    "fingerprint_obj": BrowserForgeCompatible().get_fg(profile=work_profile),
+    # ------------- This is a Required Parameter -------------
     # Accepts single parameter "profile" of type "ProfileInfo"
     # This fingerprint is a BrowserForge Integration .
     # This Automatically uses the path in the dataclass given.
@@ -94,15 +87,12 @@ b_config = BrowserConfig.from_dict(bdict)
 # Import camouchatlogger from Custom_logger
 browser = CamoufoxBrowser(
     # It takes 3 parameter & All are REQUIRED PARAMETER:
-
     config=b_config,
     # This is the browser_config we just created earlier , we can custom set our browser by changing data in the b_config.
-
     profile=work_profile,
     # Remember we created the profile earlier ?
     # That profile goes here so that browser is saved & Isolated with the Profiles.
-
-    log=camouchatLogger
+    log=camouchatLogger,
     # This logs details & Metrics. Nothing goes outside nothing comes inside. Fully maintain on user's side.
     # Used for Error Debugging
 )
@@ -122,6 +112,7 @@ page_obj = browser.get_page()
 # to work in any module you would need to pass on a UIConfig file.
 # that's the Core heart of the camouchat to talk to WhatsApp
 
+
 async def main():
     ui_config_obj = WebSelectorConfig(page=await page_obj, log=camouchatLogger)
     login_obj = Login(
@@ -129,38 +120,31 @@ async def main():
         page=await page_obj,
         # Here give ur page obj
         # We Support Asyncio only.
-
         UIConfig=ui_config_obj,
         # Pass the UI Config Obj here.
-
-        log=camouchatLogger
+        log=camouchatLogger,
     )
 
     await login_obj.login(
-        method = 0,
+        method=0,
         # ---- REQUIRED PARAMETER ------
         # 0 FOR QR BASED LOGIN.
         # 1 FOR CODE BASED LOGIN.
         # It is only 1 time setup for your profile afterward it will auto save the session.
-
         wait_time=150_000,
         # ---- REQUIRED PARAMETER ------
         # The time it would wait for QR SCAN to be scanned , Default -> 180_000 seconds
-
-        url = "web url of whatsapp.",
+        url="web url of whatsapp.",
         # Optional to give sdk itself catches the saved URL.
-
         # ----------- THESE ARE ONLY REQUIRED WHEN YOU CHOOSE 1 AS YOUR LOGIN METHOD -------------
         number=0000000000,
         # ---- REQUIRED PARAMETER ------
         # No need of adding country Code
-
-        country="Your Country"
+        country="Your Country",
         # ---- REQUIRED PARAMETER ------
         # This will automatically select your country.
-
         # -- IF U CHOOSE LOGIN 1 , IT USES CODE BASED LOGIN , IT WILL SEND THE CODE IN THE TERMINAL.
-        #PLEASE ENTER THAT CODE INTO YOUR DEVICE -> NOTIFICATION [WHATSAPP SEND NOTIFICATION ITSELF] -> CLICK -> ENTER CODE.
+        # PLEASE ENTER THAT CODE INTO YOUR DEVICE -> NOTIFICATION [WHATSAPP SEND NOTIFICATION ITSELF] -> CLICK -> ENTER CODE.
     )
 
     # After you select your method & proceed , it will save your session inside the profile on your disk.
@@ -171,16 +155,22 @@ async def main():
     # In Case there are multiple linked devices -> Open Your Profile which you want to remove.
     # Then check in Linked Devices for recent active & remove it.
 
+
 if __name__ == "__main__":
-    asyncio.run(main()) # Run
+    asyncio.run(main())  # Run
 
 
 # Fetch Chats
 # Assuming you have already done Login into your account.
 
+
 async def chatprocessor():
 
-    C_processor = ChatProcessor(page=await page_obj, log=camouchatLogger, UIConfig=WebSelectorConfig(page=await page_obj, log=camouchatLogger))
+    C_processor = ChatProcessor(
+        page=await page_obj,
+        log=camouchatLogger,
+        UIConfig=WebSelectorConfig(page=await page_obj, log=camouchatLogger),
+    )
     # All 3 are REQUIRED PARAMETER for ChatProcessor
 
     _M_processor = MessageProcessor(
@@ -190,16 +180,14 @@ async def chatprocessor():
         chat_processor=C_processor,
         page=await page_obj,
         log=camouchatLogger,
-        UIConfig=WebSelectorConfig(page=await page_obj, log=camouchatLogger)
+        UIConfig=WebSelectorConfig(page=await page_obj, log=camouchatLogger),
     )
 
     count = 1
     while True:
         _chats = await C_processor.fetch_chats()
         # Returns list of WhatsApp_chat
-        count+=1
-
+        count += 1
 
         if count == 6:
             break
-

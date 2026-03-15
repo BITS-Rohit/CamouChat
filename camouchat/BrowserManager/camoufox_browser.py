@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 import os
-from typing import Optional, Dict
+from typing import Optional, Dict, Union
 
 import camoufox.exceptions
 from browserforge.fingerprints import Fingerprint
@@ -29,7 +29,10 @@ class CamoufoxBrowser(BrowserInterface):
     Map: Dict[int, BrowserContext] = {}
 
     def __init__(
-        self, config: BrowserConfig, profile: ProfileInfo, log: logging.Logger
+        self,
+        config: BrowserConfig,
+        profile: ProfileInfo,
+        log: Union[logging.Logger, logging.LoggerAdapter],
     ) -> None:
         """
         :param cache_dir_path: saves the browser cache dir
@@ -83,7 +86,7 @@ class CamoufoxBrowser(BrowserInterface):
         if tries > 5:
             raise BrowserException("Max Camoufox IP retry attempts exceeded")
 
-        fg: Fingerprint = self.BrowserForge.get_fg(profile_path=self.profile.fingerprint_path)
+        fg: Fingerprint = self.BrowserForge.get_fg(profile=self.profile)
 
         try:
             browser = await AsyncCamoufox(

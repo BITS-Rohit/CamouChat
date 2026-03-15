@@ -49,26 +49,26 @@ class MessageProcessor(MessageProcessorInterface):
 
     def __new__(cls, *args, **kwargs) -> MessageProcessor:
         # MessageProcessor takes page as 5th positional arg or keyword
-        page = kwargs.get('page') or (args[4] if len(args) > 4 else None)
+        page = kwargs.get("page") or (args[4] if len(args) > 4 else None)
         if page is None:
             # Fallback for when we might not have it yet or it's incorrectly passed
             # But in this SDK it should be there.
             return super(MessageProcessor, cls).__new__(cls)
-            
+
         if page not in cls._instances:
             instance = super(MessageProcessor, cls).__new__(cls)
             cls._instances[page] = instance
         return cls._instances[page]
 
     def __init__(
-            self,
-            storage_obj: Optional[StorageInterface],
-            filter_obj: Optional[MessageFilter],
-            chat_processor: ChatProcessor,
-            page: Page,
-            log: logging.Logger,
-            UIConfig: WebSelectorConfig,
-            encryption_key: Optional[bytes] = None,
+        self,
+        storage_obj: Optional[StorageInterface],
+        filter_obj: Optional[MessageFilter],
+        chat_processor: ChatProcessor,
+        page: Page,
+        log: logging.Logger,
+        UIConfig: WebSelectorConfig,
+        encryption_key: Optional[bytes] = None,
     ) -> None:
         if hasattr(self, "_initialized") and self._initialized:
             return
@@ -129,7 +129,7 @@ class MessageProcessor(MessageProcessorInterface):
 
     @staticmethod
     async def sort_messages(
-            msgList: Sequence[whatsapp_message], incoming: bool
+        msgList: Sequence[whatsapp_message], incoming: bool
     ) -> List[whatsapp_message]:
         """Filter messages by direction (incoming or outgoing)."""
         if not msgList:
@@ -141,7 +141,7 @@ class MessageProcessor(MessageProcessorInterface):
 
     @ensure_chat_clicked(lambda self, chat: self.chat_processor._click_chat(chat))
     async def _get_wrapped_Messages(
-            self, chat: whatsapp_chat, retry: int = 3, *args, **kwargs
+        self, chat: whatsapp_chat, retry: int = 3, *args, **kwargs
     ) -> List[whatsapp_message]:
 
         wrapped_list: List[whatsapp_message] = []
@@ -187,7 +187,7 @@ class MessageProcessor(MessageProcessorInterface):
             raise MessageProcessorError("failed to wrap messages") from e
 
     async def Fetcher(  # type: ignore[override]
-            self, chat: whatsapp_chat, retry: int, *args, **kwargs
+        self, chat: whatsapp_chat, retry: int, *args, **kwargs
     ) -> List[whatsapp_message]:
         """Fetch, optionally encrypt, store, and filter messages from a chat."""
         msgList = await self._get_wrapped_Messages(chat, retry, *args, **kwargs)
@@ -216,7 +216,9 @@ class MessageProcessor(MessageProcessorInterface):
                             except Exception as e:
                                 self.log.warning(f"Failed to encrypt message {msg.message_id}: {e}")
                         else:
-                            self.log.debug(f"Skipping body encryption for non-text message {msg.message_id}")
+                            self.log.debug(
+                                f"Skipping body encryption for non-text message {msg.message_id}"
+                            )
 
                         msg.encrypted_chat_name = enc_chat_b64
                         msg.chat_name_nonce = chat_nonce_b64

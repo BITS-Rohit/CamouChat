@@ -105,4 +105,4 @@ ignore_missing_imports = true
 ignore = ["DEP002"]
 
 [tool.deptry.per_rule_ignores]
-DEP001 = ["Quartz", "src"]
+DEP001 = ["Quartz", "camouchat", "concurrent_log_handler", "camoufox"]

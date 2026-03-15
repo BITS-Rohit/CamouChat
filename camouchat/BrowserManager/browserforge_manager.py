@@ -99,7 +99,7 @@ class BrowserForgeCompatible(BrowserForgeCapable):
             try:
                 import ctypes
 
-                user32 = ctypes.windll.user32
+                user32 = ctypes.windll.user32  # type: ignore[attr-defined]
                 try:
                     user32.SetProcessDPIAware()
                 except Exception:
