@@ -17,9 +17,9 @@ def test_profile_manager_manual():
     pm.create_profile(Platform.WHATSAPP, "test2")
 
     listing = pm.list_profiles(Platform.WHATSAPP)
-    assert "whatsapp" in listing
-    assert "test1" in listing["whatsapp"]
-    assert "test2" in listing["whatsapp"]
+    assert Platform.WHATSAPP in listing
+    assert "test1" in listing[Platform.WHATSAPP]
+    assert "test2" in listing[Platform.WHATSAPP]
 
     assert pm.is_profile_exists(Platform.WHATSAPP, "test1")
     assert pm.is_profile_exists(Platform.WHATSAPP, "test2")
