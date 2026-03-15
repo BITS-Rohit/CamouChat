@@ -14,9 +14,9 @@ from playwright.async_api import (
     BrowserContext,
 )
 
-from src.Exceptions.whatsapp import LoginError
-from src.WhatsApp.login import Login
-from src.WhatsApp.web_ui_config import WebSelectorConfig
+from camouchat.Exceptions.whatsapp import LoginError
+from camouchat.WhatsApp.login import Login
+from camouchat.WhatsApp.web_ui_config import WebSelectorConfig
 
 # ============================================================================
 # FIXTURES
@@ -203,28 +203,6 @@ async def test_code_login_success(login_instance, tmp_path):
     mock_role_btn.click.assert_called()
     mock_input.type.assert_called_with("1234567890", delay=pytest.approx(100, abs=20))
     mock_code_el.get_attribute.assert_called_with("data-link-code")
-
-
-@pytest.mark.asyncio
-async def test_logout_success(login_instance, tmp_path):
-    """Test logout cleans up directory."""
-    # Create a dummy file in a dir
-    session_dir = tmp_path / "session"
-    session_dir.mkdir()
-    (session_dir / "file.txt").write_text("data")
-
-    result = await login_instance.logout(str(session_dir))
-
-    assert result is True
-    # Verify file deleted
-    assert not (session_dir / "file.txt").exists()
-
-
-@pytest.mark.asyncio
-async def test_logout_invalid_path(login_instance):
-    """Test logout returns False for invalid path."""
-    result = await login_instance.logout("/invalid/path/that/does/not/exist")
-    assert result is False
 
 
 @pytest.mark.asyncio

@@ -9,11 +9,11 @@ from unittest.mock import Mock, AsyncMock
 import pytest
 from playwright.async_api import Page, Locator, TimeoutError as PlaywrightTimeoutError, Position
 
-from src.Exceptions.whatsapp import ReplyCapableError
-from src.WhatsApp.DerivedTypes.Message import whatsapp_message
-from src.WhatsApp.humanized_operations import HumanizedOperations
-from src.WhatsApp.reply_capable import ReplyCapable
-from src.WhatsApp.web_ui_config import WebSelectorConfig
+from camouchat.Exceptions.whatsapp import ReplyCapableError
+from camouchat.WhatsApp.DerivedTypes.Message import whatsapp_message
+from camouchat.WhatsApp.humanized_operations import HumanizedOperations
+from camouchat.WhatsApp.reply_capable import ReplyCapable
+from camouchat.WhatsApp.web_ui_config import WebSelectorConfig
 
 # ============================================================================
 # FIXTURES

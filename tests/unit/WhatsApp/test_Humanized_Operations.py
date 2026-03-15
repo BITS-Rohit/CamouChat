@@ -9,9 +9,9 @@ from unittest.mock import Mock, AsyncMock, patch
 import pytest
 from playwright.async_api import Page, Locator, TimeoutError as PlaywrightTimeoutError
 
-from src.Exceptions.base import ElementNotFoundError, HumanizedOperationError
-from src.WhatsApp.humanized_operations import HumanizedOperations
-from src.WhatsApp.web_ui_config import WebSelectorConfig
+from camouchat.Exceptions.base import ElementNotFoundError, HumanizedOperationError
+from camouchat.WhatsApp.humanized_operations import HumanizedOperations
+from camouchat.WhatsApp.web_ui_config import WebSelectorConfig
 
 # ============================================================================
 # FIXTURES
@@ -37,7 +37,7 @@ def mock_ui_config():
 
 @pytest.fixture
 def humanize_fixture(mock_page, mock_logger, mock_ui_config):
-    with patch("src.WhatsApp.humanized_operations.pyperclip") as mock_clip:
+    with patch("camouchat.WhatsApp.humanized_operations.pyperclip") as mock_clip:
         humanize = HumanizedOperations(page=mock_page, log=mock_logger, UIConfig=mock_ui_config)
         yield humanize, mock_clip
 

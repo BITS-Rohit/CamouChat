@@ -27,7 +27,11 @@ keywords = [
     "async",
     "sqlite",
     "postgresql",
-    "camouchat"
+    "camouchat",
+    "stealth",
+    "bypass",
+    "chat-bot",
+    "agents"
 ]
 
 classifiers = [
@@ -79,10 +83,7 @@ Repository = "https://github.com/BITS-Rohit/camouchat"
 Changelog = "https://github.com/BITS-Rohit/camouchat/releases"
 
 [tool.setuptools]
-package-dir = { "" = "src" }
-
-[tool.setuptools.packages.find]
-where = ["src"]
+packages = ["camouchat"]
 
 [tool.pytest.ini_options]
 minversion = "7.0"
@@ -90,7 +91,7 @@ testpaths = ["tests"]
 asyncio_mode = "auto"
 
 [tool.coverage.run]
-source = ["src"]
+source = ["camouchat"]
 
 [tool.black]
 line-length = 100
@@ -102,6 +103,8 @@ ignore_missing_imports = true
 
 [tool.deptry]
 ignore = ["DEP002"]
+known_first_party = ["camouchat"]
 
 [tool.deptry.per_rule_ignores]
-DEP001 = ["Quartz", "src"]
+DEP001 = ["Quartz", "camouchat", "concurrent_log_handler", "camoufox"]
+DEP003 = ["camouchat"]

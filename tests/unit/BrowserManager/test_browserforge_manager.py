@@ -11,10 +11,9 @@ from unittest.mock import Mock, patch
 import pytest
 from browserforge.fingerprints import Fingerprint
 
-# Direct imports to avoid circular dependency
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
-from src.BrowserManager import browserforge_manager
-from src.Exceptions import base
+from camouchat.BrowserManager import browserforge_manager
+from camouchat.Exceptions import base
 
 BrowserForgeCompatible = browserforge_manager.BrowserForgeCompatible
 BrowserException = base.BrowserException
@@ -70,13 +69,15 @@ def test_init_no_logger():
 def test_get_fg_loads_existing(browserforge, mock_fingerprint, tmp_path):
     """Test get_fg loads existing fingerprint from file."""
     fg_path = tmp_path / "fingerprint.pkl"
+    mock_profile = Mock()
+    mock_profile.fingerprint_path = fg_path
 
     # Create dummy fingerprint file
     with open(fg_path, "wb") as f:
         f.write(b"dummy")
 
     with patch("pickle.load", return_value=mock_fingerprint):
-        result = browserforge.get_fg(fg_path)
+        result = browserforge.get_fg(mock_profile)
 
     assert result == mock_fingerprint
 
@@ -84,11 +85,14 @@ def test_get_fg_loads_existing(browserforge, mock_fingerprint, tmp_path):
 def test_get_fg_generates_new(browserforge, mock_fingerprint, tmp_path, mock_logger):
     """Test get_fg generates new fingerprint if file is empty."""
     fg_path = tmp_path / "fingerprint.pkl"
+    mock_profile = Mock()
+    mock_profile.fingerprint_path = fg_path
+
     fg_path.touch()  # Create empty file
 
     with patch.object(browserforge, "__gen_fg__", return_value=mock_fingerprint):
         with patch("pickle.dump"):
-            result = browserforge.get_fg(fg_path)
+            result = browserforge.get_fg(mock_profile)
 
     assert result == mock_fingerprint
 
@@ -96,9 +100,11 @@ def test_get_fg_generates_new(browserforge, mock_fingerprint, tmp_path, mock_log
 def test_get_fg_path_not_exists(browserforge):
     """Test get_fg raises error if path doesn't exist."""
     fake_path = Path("/nonexistent/path/fg.pkl")
+    mock_profile = Mock()
+    mock_profile.fingerprint_path = fake_path
 
     with pytest.raises(BrowserException, match="path given does not exist"):
-        browserforge.get_fg(fake_path)
+        browserforge.get_fg(mock_profile)
 
 
 # ============================================================================
@@ -109,10 +115,10 @@ def test_get_fg_path_not_exists(browserforge):
 def test_gen_fg_success(browserforge, mock_fingerprint, mock_logger):
     """Test __gen_fg__ generates valid fingerprint matching screen size."""
     with patch(
-        "src.BrowserManager.browserforge_manager.BrowserForgeCompatible.get_screen_size",
+        "camouchat.BrowserManager.browserforge_manager.BrowserForgeCompatible.get_screen_size",
         return_value=(1920, 1080),
     ):
-        with patch("src.BrowserManager.browserforge_manager.FingerprintGenerator") as MockGen:
+        with patch("camouchat.BrowserManager.browserforge_manager.FingerprintGenerator") as MockGen:
             mock_gen_instance = MockGen.return_value
             mock_gen_instance.generate.return_value = mock_fingerprint
 
@@ -132,10 +138,10 @@ def test_gen_fg_retries_on_mismatch(browserforge, mock_logger):
     good_fg.screen = Mock(width=1920, height=1080)
 
     with patch(
-        "src.BrowserManager.browserforge_manager.BrowserForgeCompatible.get_screen_size",
+        "camouchat.BrowserManager.browserforge_manager.BrowserForgeCompatible.get_screen_size",
         return_value=(1920, 1080),
     ):
-        with patch("src.BrowserManager.browserforge_manager.FingerprintGenerator") as MockGen:
+        with patch("camouchat.BrowserManager.browserforge_manager.FingerprintGenerator") as MockGen:
             mock_gen_instance = MockGen.return_value
             mock_gen_instance.generate.side_effect = [bad_fg, good_fg]
 
@@ -152,10 +158,10 @@ def test_gen_fg_max_attempts(browserforge, mock_logger):
     bad_fg.screen = Mock(width=800, height=600)
 
     with patch(
-        "src.BrowserManager.browserforge_manager.BrowserForgeCompatible.get_screen_size",
+        "camouchat.BrowserManager.browserforge_manager.BrowserForgeCompatible.get_screen_size",
         return_value=(1920, 1080),
     ):
-        with patch("src.BrowserManager.browserforge_manager.FingerprintGenerator") as MockGen:
+        with patch("camouchat.BrowserManager.browserforge_manager.FingerprintGenerator") as MockGen:
             mock_gen_instance = MockGen.return_value
             mock_gen_instance.generate.return_value = bad_fg
 
@@ -169,7 +175,7 @@ def test_gen_fg_max_attempts(browserforge, mock_logger):
 def test_gen_fg_invalid_screen_size(browserforge):
     """Test __gen_fg__ raises error for invalid screen dimensions."""
     with patch(
-        "src.BrowserManager.browserforge_manager.BrowserForgeCompatible.get_screen_size",
+        "camouchat.BrowserManager.browserforge_manager.BrowserForgeCompatible.get_screen_size",
         return_value=(0, 0),
     ):
         with pytest.raises(BrowserException, match="Invalid real screen dimensions"):
@@ -237,21 +243,30 @@ def test_get_fingerprint_as_dict_success(tmp_path):
     json_path = tmp_path / "fg.json"
     json_path.write_text('{"screen": {"width": 1920, "height": 1080}}')
 
-    result = BrowserForgeCompatible.get_fingerprint_as_dict(json_path)
+    mock_profile = Mock()
+    mock_profile.fingerprint_path = json_path
+
+    result = BrowserForgeCompatible.get_fingerprint_as_dict(mock_profile)
 
     assert result["screen"]["width"] == 1920
 
 
 def test_get_fingerprint_as_dict_not_exists():
-    """Test get_fingerprint_as_dict raises error if path doesn't exist."""
+    fake_path = Path("/fake/path.json")
+    mock_profile = Mock()
+    mock_profile.fingerprint_path = fake_path
+
     with pytest.raises(BrowserException, match="does not exist"):
-        BrowserForgeCompatible.get_fingerprint_as_dict(Path("/fake/path.json"))
+        BrowserForgeCompatible.get_fingerprint_as_dict(mock_profile)
 
 
 def test_get_fingerprint_as_dict_not_file(tmp_path):
     """Test get_fingerprint_as_dict raises error if path is directory."""
+    mock_profile = Mock()
+    mock_profile.fingerprint_path = tmp_path
+
     with pytest.raises(BrowserException, match="is not a file"):
-        BrowserForgeCompatible.get_fingerprint_as_dict(tmp_path)
+        BrowserForgeCompatible.get_fingerprint_as_dict(mock_profile)
 
 
 def test_get_fingerprint_as_dict_empty(tmp_path):
@@ -259,8 +274,11 @@ def test_get_fingerprint_as_dict_empty(tmp_path):
     empty_file = tmp_path / "empty.json"
     empty_file.touch()
 
+    mock_profile = Mock()
+    mock_profile.fingerprint_path = empty_file
+
     with pytest.raises(BrowserException, match="is empty"):
-        BrowserForgeCompatible.get_fingerprint_as_dict(empty_file)
+        BrowserForgeCompatible.get_fingerprint_as_dict(mock_profile)
 
 
 def test_get_fingerprint_as_dict_invalid_json(tmp_path):
@@ -268,8 +286,11 @@ def test_get_fingerprint_as_dict_invalid_json(tmp_path):
     bad_json = tmp_path / "bad.json"
     bad_json.write_text("{invalid json")
 
+    mock_profile = Mock()
+    mock_profile.fingerprint_path = bad_json
+
     with pytest.raises(BrowserException, match="Invalid fingerprint JSON"):
-        BrowserForgeCompatible.get_fingerprint_as_dict(bad_json)
+        BrowserForgeCompatible.get_fingerprint_as_dict(mock_profile)
 
 
 def test_get_fingerprint_as_dict_not_dict(tmp_path):
@@ -277,5 +298,8 @@ def test_get_fingerprint_as_dict_not_dict(tmp_path):
     list_json = tmp_path / "list.json"
     list_json.write_text("[1, 2, 3]")
 
+    mock_profile = Mock()
+    mock_profile.fingerprint_path = list_json
+
     with pytest.raises(BrowserException, match="not a valid dict"):
-        BrowserForgeCompatible.get_fingerprint_as_dict(list_json)
+        BrowserForgeCompatible.get_fingerprint_as_dict(mock_profile)

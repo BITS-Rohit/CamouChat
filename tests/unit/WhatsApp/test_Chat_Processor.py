@@ -14,10 +14,15 @@ from playwright.async_api import (
     TimeoutError as PlaywrightTimeoutError,
 )
 
-from src.Exceptions import ChatNotFoundError, ChatClickError, ChatProcessorError, ChatUnreadError
-from src.WhatsApp.DerivedTypes.Chat import whatsapp_chat
-from src.WhatsApp.chat_processor import ChatProcessor
-from src.WhatsApp.web_ui_config import WebSelectorConfig
+from camouchat.Exceptions import (
+    ChatNotFoundError,
+    ChatClickError,
+    ChatProcessorError,
+    ChatUnreadError,
+)
+from camouchat.WhatsApp.DerivedTypes.Chat import whatsapp_chat
+from camouchat.WhatsApp.chat_processor import ChatProcessor
+from camouchat.WhatsApp.web_ui_config import WebSelectorConfig
 
 # ============================================================================
 # FIXTURES

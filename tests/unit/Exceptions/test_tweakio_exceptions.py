@@ -1,4 +1,4 @@
-from src.Exceptions import (
+from camouchat.Exceptions import (
     ChatNotFoundError,
     ChatClickError,
     MessageNotFoundError,
