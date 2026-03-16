@@ -59,12 +59,12 @@ capabilities with solving all the other issues that those browser automation lib
 
 **Using `uv` (Recommended)**:
 ```bash
-uv pip install .
+uv pip install camouchat
 ```
 
 **Or Using `pip`**:
 ```bash
-pip install .
+pip install camouchat
 ```
 
 **Then : install playwright & camoufox update**
@@ -79,11 +79,9 @@ python -m camoufox fetch
 
 ## ⚡ Quick Start
 
-For a clean and comprehensive guide on how to use the SDK, please check our documentation folder. It contains fully up-to-date and type-safe `ProfileManager` integrations:
+👉 **Quick Start Guides**: [BrowserManager Guide](docs/BrowserManager/quickstart.md) | [WhatsApp Guide](docs/WhatsApp/quickstart.md)
 
-👉 **[Go to Quick Start Documentation](docs/quickstart.md)**
-
-Whether you need basic chat fetching, multi-profile anti-detect sessions, or advanced async encrypted storage, you will find clean examples there.
+Whether you need basic chat fetching, multi-profile anti-detect sessions, or advanced async encrypted storage, you will find clean examples in the specific module guides.
 
 ---
 
