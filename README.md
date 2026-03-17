@@ -1,11 +1,19 @@
-[//]: # (![Project Banner]&#40;assets/OSCG_Banner.jpeg&#41;)
-
-# CamouChat
-<p align="center">
-  <img src="assets/CamouChat_Logo.png" width="400" alt="" height="300"/>
-</p>
-
-**Old Name Tweakio-sdk , New Name : CamouChat** 
+<table>
+<tr>
+<td style="vertical-align: middle; padding-right: 1px; padding-left: 1px;">
+  <img src="assets/camouchat.png" width="250" alt="CamouChat Logo"/>
+</td>
+<td style="vertical-align: middle;">
+<pre style="margin:0;">
+   ____                                  ____ _           _   
+  / ___| __ _ _ __ ___   ___  _   _     / ___| |__   __ _| |_ 
+ | |    / _` | '_ ` _ \ / _ \| | | |   | |   | '_ \ / _` | __|
+ | |___| (_| | | | | | | (_) | |_| |   | |___| | | | (_| | |_ 
+  \____|\__,_|_| |_| |_|\___/ \__,_|    \____|_| |_|\__,_|\__|
+</pre>
+</td>
+</tr>
+</table>
 
 [![PyPI Downloads](https://static.pepy.tech/personalized-badge/tweakio-sdk?period=total&units=INTERNATIONAL_SYSTEM&left_color=BLACK&right_color=GREEN&left_text=downloads)](https://pepy.tech/projects/tweakio-sdk)
 [![PyPI - Version](https://img.shields.io/pypi/v/tweakio-sdk?label=tweakio-sdk)](https://pypi.org/project/tweakio-sdk/)
@@ -15,71 +23,177 @@
 
 ---
 
-## Why CamouChat ?
+## Why CamouChat?
 
-WhatsApp automation is broken:
-
-before looking back into why camouchat . lets explore some already defined libraries. 
-1. [pywhatkit](https://github.com/Ankit404butfound/PyWhatKit) This is a famous python WhatsApp kit via that we can automate our whatsapp simply and nicely. Last commit = 2 years ago still other libs that exist gives better benefits.
-But what if selectors based breaks now ? what if number used got banned ? where is number safety. also we cannot save sessions and require u to again and again login , messed up not good for long term. and no Profiles etc setup.
-2. [pywhatsapp](https://github.com/tax/pywhatsapp) it requires some yowsup stuff , I did not understand about is it safe or not ? no solid proof of verified source of long term access, also where is reliability again ? i was not convinced as it had commits some freaking 11 years so i gone for next Explore searches. 
-3. [webwhatsap-wrapper](https://github.com/mukulhase/WebWhatsapp-Wrapper) it has good document, but freaking 6 years ago last commit, and again not worked very good , so my only option is to look around again for next option. 
-4. [alright](https://github.com/Kalebu/alright?tab=readme-ov-file) It also explains simply why alright but again last commit 3 years ago . Simple native APIs it gives, but not looked promising if any error raised up as i want reliable source of truth which i think many wants. Also it did saves and hanle login etc. but mulitple Profiles etc fingerprinting how it will handle? is it safe against Number ban ? how deeply it connects to drivers , i did not see any of this security and hence liability.  
-5. [WAHA](https://github.com/devlikeapro/waha) it is very famous lib for fast automating WhatsApp web , from docs and readme.md it is sure that it is fast against a browser automation based approacch , but recently it a large number of users got hacked cuz of some leaking API securty , it requires some setup too and kind of hard and u would  need to understand a lot of networking if u are like wondering is it really good and whats the best setup u can make with WAHA. But again it just wraps around web whatsapp API , but no account safety or other security , or any profile | Multi-profile Handling.
-
-hence after all these libs explore i got to know , that we can trade off the fast API like WAHA with stealth profiles that can manage profiles internally and i would not need to do much work. 
-Thats where CamouChat-sdk comes in. Its not just library , it's  Published on PYPI and packaged as SDK . 
-
---- 
-## Benefits 
-
-Here First of all we are not gonna make an API wrapper cuz WAHA already does that but we can make a trade off of that fast API wrapping to browser automation
-capabilities with solving all the other issues that those browser automation libs had. 
-1. CamouChat uses [Camoufox Browser](https://github.com/daijro/camoufox) which is a patched version of [Playwright](https://github.com/microsoft/playwright-python)'s firefox browser. Camoufox is still an active repo and a well known open source anti-detect browser.
-2. CamouChat also uses [BrowserForge](https://github.com/daijro/browserforge) it provides random fingerprint dataclasses to send directly into the camoufox. 
-3. CamouChat gives Multi-profile Handling easily for users to directly start the profiles. 
-4. CamouChat gives Encryption and Decryption system (AES GCM 256) for storing messages internally with Encryption so that if any security breach happens the core messaging still holds the privacy and do not let the Account messages get leaked.
-5. CamouChat uses [sql alchemy](https://github.com/sqlalchemy/sqlalchemy) it directly provides us safe sql handling against any sql injection and other attacks. Parameterized insertion , and support all type of sql databases. ( Also an active repo ).
-6. CamouChat uses Sandboxing Every Browser to keep fingerprint remain stealth. And able to create new Fingerprint without being mixed with other profiles.
-7. CamouChat is based on Playwright browser which self handles Session saving and updating internally and reliably
-8. CamouChat's scopes is not just to provide this , it has scope to keep maintaining it and also adding all other famous messaging platform into it so that devs do not need to learn new libs for diff platform. It works on a singular Architecture to remain easy for devs.
-9. CamouChat will also be inheriting Stable Techniques used by older libs so that it can provide all the best cherry-picks from all , Not just one.
-10. CamouChat has internal rate limiting mechanism that you can use while making ur Bot | Agent Apps. 
-11. CamouChat also has Humanized typing and Humanized mouse to face ML based Long Term Detection proof. It auto rotates the time and all making you u do not worry about how to make it manually.
-12. CamouChat stores nothing on its own side | nothing sends outside -> it all saves the data on ur device. 
-13. CamouChat is OS independent from automating browser to upto saving data to correct professionalism directory according to OS ( Linux | MacOS | Windows).
-
+WhatsApp automation today suffers from fragmentation, instability, and lack of long-term reliability.  
+Before building CamouChat, several existing libraries were evaluated to understand current limitations.
 
 ---
 
+### Existing Libraries Overview
+
+1. **[pywhatkit](https://github.com/Ankit404butfound/PyWhatKit)**  
+   Simple and beginner-friendly, but:
+   - Last active ~2 years ago  
+   - Relies on fragile selector-based automation  
+   - No session persistence  
+   - No account safety or profile isolation  
+
+2. **[pywhatsapp](https://github.com/tax/pywhatsapp)**  
+   - Depends on older ecosystems like yowsup  
+   - Limited clarity on long-term reliability  
+   - Outdated with minimal recent activity  
+
+3. **[webwhatsap-wrapper](https://github.com/mukulhase/WebWhatsapp-Wrapper)**  
+   - Well documented  
+   - However, inactive (~6 years)  
+   - Not reliable for modern WhatsApp updates  
+
+4. **[alright](https://github.com/Kalebu/alright)**  
+   - Clean API design  
+   - Handles login/session  
+   - But lacks:
+     - Multi-profile support  
+     - Fingerprinting control  
+     - Strong reliability guarantees  
+
+5. **[WAHA](https://github.com/devlikeapro/waha)**  
+   - Fast REST-based automation approach  
+   - However:
+     - Requires deeper networking understanding  
+     - External API exposure considerations  
+     - Limited focus on account safety and stealth  
+     - No native profile isolation system  
 
 ---
+
+### Problem Summary
+
+Across existing tools, common limitations were observed:
+
+- Fragile selector-based automation  
+- Lack of multi-account/profile isolation  
+- Weak or absent anti-detection strategies  
+- Poor long-term maintenance in many projects  
+- No unified architecture across platforms  
+
+---
+
+## Introducing CamouChat
+
+CamouChat is designed as a **developer-focused SDK**, not just another wrapper.
+
+It prioritizes:
+
+- **Reliability over shortcuts**  
+- **Stealth-aware automation**  
+- **Controlled and extensible architecture**  
+
+Instead of competing on raw API speed, CamouChat focuses on building a **stable and maintainable automation layer**.
+
+---
+
+## Key Benefits
+
+1. **Anti-Detection Browser Layer**  
+   Built on [Camoufox](https://github.com/daijro/camoufox), a patched Playwright-based Firefox with stealth-oriented capabilities.
+
+2. **Dynamic Fingerprinting**  
+   Uses [BrowserForge](https://github.com/daijro/browserforge) for realistic and adaptive fingerprint generation.
+
+3. **Multi-Profile Management**  
+   Run multiple isolated accounts with proper session separation and lifecycle control.
+
+4. **Secure Message Storage**  
+   AES-GCM-256 encryption ensures internal data protection.
+
+5. **Database Flexibility & Safety**  
+   Powered by [SQLAlchemy](https://github.com/sqlalchemy/sqlalchemy):
+   - Supports multiple databases  
+   - Uses parameterized queries to reduce injection risks  
+
+6. **Browser Sandboxing**  
+   Each profile operates in isolation to prevent fingerprint leakage.
+
+7. **Reliable Session Handling**  
+   Built on Playwright’s robust session persistence mechanisms.
+
+8. **Extensible Architecture**  
+   Designed to support multiple messaging platforms under a unified SDK.
+
+9. **Best-of Approach**  
+   Incorporates stable techniques from existing tools while addressing their limitations.
+
+10. **Rate Limiting Support**  
+   Helps build safer automation workflows and reduce detection risks.
+
+11. **Humanized Interaction Layer**  
+   Simulates realistic typing and mouse behavior to reduce automation patterns.
+
+12. **Local-First Privacy**  
+   - No external data transmission  
+   - No hidden telemetry  
+   - All data remains on the user’s system  
+
+13. **Cross-Platform Support**  
+   Works consistently across:
+   - Linux  
+   - macOS  
+   - Windows  
+
+---
+
+## Philosophy
+
+CamouChat is built with a clear direction:
+
+> Provide a **unified, reliable, and automation-focused SDK**  
+> so developers don’t need to relearn tools for every platform.
+
+>> **CamouChat focuses on reducing detection signals,**  
+>> **not bypassing platform safeguards.**
+
+---
+
 
 ## 📦 Installation
 
-**Using `uv` (Recommended)**:
-```bash
-uv pip install camouchat
-```
-
-**Or Using `pip`**:
-```bash
-pip install camouchat
-```
-
-**Then : install playwright & camoufox update**
+### Using `uv` (Recommended)
 
 ```bash
-# Install Playwright dependencies (one-time)
-playwright install chromium
+# Create & activate virtual environment
+uv venv
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
+
+# Install package with required browser support
+uv pip install camouchat "camoufox[geoip]"
+
+# Download Camoufox browser binaries
 python -m camoufox fetch
 ```
+
+**Using `pip`**:
+```bash
+# Create & activate virtual environment
+python -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
+
+# Install package with required browser support
+pip install camouchat "camoufox[geoip]"
+
+# Download Camoufox browser binaries
+python -m camoufox fetch
+```
+
+> Camoufox uses a custom patched Firefox browser.
+> Run `python -m camoufox fetch` to download required binaries.
+> No need to run `playwright install`.
 
 ---
 
 ## ⚡ Quick Start
 
-👉 **Quick Start Guides**: [BrowserManager Guide](docs/BrowserManager/quickstart.md) | [WhatsApp Guide](docs/WhatsApp/quickstart.md)
+👉 **Quick Start Guides**: [[docs]](https://github.com/BITS-Rohit/tweakio-sdk/tree/main/docs)
 
 Whether you need basic chat fetching, multi-profile anti-detect sessions, or advanced async encrypted storage, you will find clean examples in the specific module guides.
 
@@ -96,7 +210,7 @@ Whether you need basic chat fetching, multi-profile anti-detect sessions, or adv
 - [✅] Encryption & Decryption of messages & Chats.
 - [✅] Tests Coverage >=76% and MYPY , Black , Ruff, deptry Reports Fixed
 
------ soon shipping V0.6 on [PYPI]()
+----- soon shipping V0.6 on [[PYPI]]()
 ### v0.7 — WebSelector Stability Techniques 
 - [ ] Cherry Picked stable Selector Techniques 
 - [ ] WhatsApp Stability Increase
@@ -132,12 +246,68 @@ Also limited behavior.We automate the web itself. **-- Free and Open Source**
 
 ### 📄 License
 
-MIT License — see [LICENSE](LICENSE)
+MIT License — see [[LICENSE]](LICENSE)
 
-### Disclaimer
+## ⚠️ Security & Usage Guidelines
 
-* CamouChat-sdk is for Education | devs | Agents creating | Business Prototypes Not for Commercial usage. It does not encourage Platform ToS violation.
-* Commercial usage is strictly prohibited. 
+CamouChat is intended for **educational, research, and controlled automation use cases**.  
+By using this SDK, you agree to use it responsibly and in compliance with applicable laws and platform policies.
+
+---
+
+### Acceptable Usage
+
+- Academic research and benchmarking  
+- Personal automation and developer tooling  
+- Prototyping agents and automation workflows  
+- Learning browser automation and system design  
+
+---
+
+### Prohibited Usage
+
+- Violating platform Terms of Service (ToS)  
+- Sending spam, bulk, or unsolicited messages  
+- Attempting to bypass platform safeguards or protections  
+- Operating automation at scale without proper compliance  
+- Any activity that may harm users, services, or infrastructure  
+
+---
+
+### Security Best Practices
+
+- Use **dedicated or test accounts** for automation (avoid personal accounts)  
+- Respect platform limits and avoid high-frequency actions  
+- Maintain realistic interaction patterns (avoid unnatural behavior)  
+- Secure credentials, session data, and local storage  
+- Monitor accounts regularly for warnings or unusual activity  
+
+---
+
+### Data & Privacy
+
+- CamouChat follows a **local-first approach**  
+- No data is transmitted externally by the SDK  
+- All sessions, logs, and data remain on the user’s system  
+- Users are responsible for securing their environment and data  
+
+---
+
+### Responsibility Disclaimer
+
+- CamouChat provides development tooling, not guarantees of anonymity or bypass  
+- It does **not ensure protection against platform detection mechanisms**  
+- The maintainers are **not responsible** for misuse or resulting consequences  
+- Users must ensure compliance with:
+  - Platform policies  
+  - Local laws and regulations  
+
+---
+
+### Ethical Use
+
+> CamouChat is designed to assist development and automation workflows.  
+> It should not be used to exploit, abuse, or disrupt platforms or users.
 
 
-_Built with ❤️ by BITS-Rohit and the CamouChat-sdk community_
+_Built with ❤️ by BITS-Rohit and the [[CamouChat]](https://github.com/BITS-Rohit/tweakio-sdk) community_
