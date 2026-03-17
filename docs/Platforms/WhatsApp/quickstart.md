@@ -145,7 +145,7 @@ async def advanced_ops(page, chat_proc, target_chat):
 ```
 
 > [!NOTE]
-> For in-depth details, see [ReplyCapable Guide](./ReplyCapable.md) and [MediaCapable Guide](./MediaCapable.md).
+> For in-depth details, see [ReplyCapable Guide](ReplyCapable.md) and [MediaCapable Guide](MediaCapable.md).
 ```
 
 ---
