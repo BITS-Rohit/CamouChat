@@ -261,18 +261,15 @@ By using this SDK, you agree to use it responsibly and in compliance with applic
 
 ---
 
-### Ethical Use -------------------------- 
+### Ethical Use 
 
 > CamouChat is designed to assist development and automation workflows.  
 > It should not be used to exploit, abuse, or disrupt platforms or users.
 
+---
+
+## 💖 Thanks to all our Contributors!
 
 ---
 
----
-
-_Built with ❤️ by BITS-Rohit and the [[**CamouChat**]](https://github.com/BITS-Rohit/tweakio-sdk) community_
-
----
-
----
+_Built with ❤️ by BITS-Rohit and the [**CamouChat**](https://github.com/BITS-Rohit/tweakio-sdk) community_
