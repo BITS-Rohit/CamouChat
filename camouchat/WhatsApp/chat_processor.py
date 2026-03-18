@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import random
 import weakref
 from logging import Logger, LoggerAdapter
@@ -164,7 +165,7 @@ class ChatProcessor(ChatProcessorInterface):
             except CamouChatError:
                 raise
 
-            #Unexpected
+            # Unexpected
             except Exception as e:
                 self.log.error("Unexpected error in _click_chat", exc_info=True)
                 raise ChatClickError("Unexpected failure in _click_chat.") from e
