@@ -110,7 +110,7 @@ class SQLAlchemyStorage(StorageInterface):
         Returns:
             Configured SQLAlchemyStorage instance
         """
-        database_url = f"sqlite+aiosqlite:///{profile.database_path}"
+        database_url = profile.database_url
         return cls(
             queue=queue,
             log=log,

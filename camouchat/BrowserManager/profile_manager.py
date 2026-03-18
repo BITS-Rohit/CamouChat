@@ -10,6 +10,7 @@ from camouchat.directory import DirectoryManager
 from camouchat.BrowserManager.camoufox_browser import CamoufoxBrowser
 from camouchat.BrowserManager.platform_manager import Platform
 from camouchat.BrowserManager.profile_info import ProfileInfo
+from camouchat.BrowserManager.storage_type import StorageType
 
 class ProfileManager:
     """Manager / entry point for profile creation, activation, and key management.
@@ -32,14 +33,34 @@ class ProfileManager:
     # Internal helpers
     # ------------------------------------------------------------------
 
-    def _generate_metadata(self, platform: Platform, profile_id: str) -> dict:
+    def _generate_metadata(
+        self, 
+        platform: Platform, 
+        profile_id: str, 
+        storage_type: StorageType = StorageType.SQLITE,
+        database_url: Optional[str] = None
+    ) -> dict:
         now = datetime.now(timezone.utc).isoformat()
+        
+        db_path = self.directory.get_database_path(platform, profile_id)
+        if not database_url:
+            if storage_type == StorageType.SQLITE:
+                database_url = f"sqlite+aiosqlite:///{db_path}"
+            elif storage_type == StorageType.MYSQL:
+                database_url = "mysql+aiomysql://user:pass@localhost/camouchat"
+            elif storage_type == StorageType.POSTGRESQL:
+                database_url = "postgresql+asyncpg://user:pass@localhost/camouchat"
+
         return {
             "profile_id": profile_id,
             "platform": platform,
             "version": "0.6",
             "created_at": now,
             "last_used": now,
+            "database": {
+                "type": storage_type,
+                "url": database_url,
+            },
             "paths": {
                 "profile_dir": str(self.directory.get_profile_dir(platform, profile_id)),
                 "fingerprint_file": "fingerprint.pkl",
@@ -96,7 +117,13 @@ class ProfileManager:
     # Profile lifecycle
     # ------------------------------------------------------------------
 
-    def create_profile(self, platform: Platform, profile_id: str) -> ProfileInfo:
+    def create_profile(
+        self, 
+        platform: Platform, 
+        profile_id: str, 
+        storage_type: StorageType = StorageType.SQLITE,
+        database_url: Optional[str] = None
+    ) -> ProfileInfo:
         """Create a new profile; returns the existing one if already present."""
         profile_dir = self.directory.get_profile_dir(platform, profile_id)
 
@@ -113,7 +140,12 @@ class ProfileManager:
 
         (profile_dir / "fingerprint.pkl").write_bytes(b"")
 
-        metadata = self._generate_metadata(platform, profile_id)
+        metadata = self._generate_metadata(
+            platform=platform, 
+            profile_id=profile_id, 
+            storage_type=storage_type,
+            database_url=database_url
+        )
         self._write_metadata(platform, profile_id, metadata)
 
         return ProfileInfo.from_metadata(metadata, self.directory)

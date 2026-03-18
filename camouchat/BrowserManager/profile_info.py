@@ -24,6 +24,7 @@ class ProfileInfo:
     media_voice_dir: Path
     media_documents_dir: Path
     database_path: Path
+    database_url: str
 
     is_active: bool
     last_active_pid: Optional[int]
@@ -37,6 +38,10 @@ class ProfileInfo:
         profile_id = metadata["profile_id"]
 
         profile_dir = directory.get_profile_dir(platform, profile_id)
+        db_path = directory.get_database_path(platform, profile_id)
+
+        # Fallback to sqlite if database_url doesn't exist in older profiles
+        db_url = metadata.get("database", {}).get("url") or metadata["paths"].get("database_url") or f"sqlite+aiosqlite:///{db_path}"
 
         return cls(
             profile_id=profile_id,
@@ -52,7 +57,8 @@ class ProfileInfo:
             media_videos_dir=directory.get_media_videos_dir(platform, profile_id),
             media_voice_dir=directory.get_media_voice_dir(platform, profile_id),
             media_documents_dir=directory.get_media_documents_dir(platform, profile_id),
-            database_path=directory.get_database_path(platform, profile_id),
+            database_path=db_path,
+            database_url=db_url,
             is_active=metadata["status"]["is_active"],
             last_active_pid=metadata["status"]["last_active_pid"],
             encryption=metadata.get("encryption", {}),
