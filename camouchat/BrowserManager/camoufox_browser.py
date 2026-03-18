@@ -29,10 +29,10 @@ class CamoufoxBrowser(BrowserInterface):
     Map: Dict[int, BrowserContext] = {}
 
     def __init__(
-            self,
-            config: BrowserConfig,
-            profile: ProfileInfo,
-            log: Optional[Union[Logger, LoggerAdapter]] = None,
+        self,
+        config: BrowserConfig,
+        profile: ProfileInfo,
+        log: Optional[Union[Logger, LoggerAdapter]] = None,
     ) -> None:
         """
         :param cache_dir_path: saves the browser cache dir

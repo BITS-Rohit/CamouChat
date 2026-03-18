@@ -30,6 +30,7 @@ class BrowserForgeCompatible(BrowserForgeCapable):
     def __init__(self, log: Optional[Union[Logger, LoggerAdapter]] = None) -> None:
         if log is None:
             from camouchat.camouchat_logger import camouchatLogger
+
             self.log = camouchatLogger
         else:
             self.log = log

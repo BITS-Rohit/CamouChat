@@ -19,11 +19,11 @@ class ChatProcessorInterface(ABC):
     capabilities: Dict[str, bool]
 
     def __init__(
-            self,
-            page: Page,
-            ui_config: WebSelectorConfig,
-            log: Optional[Union[Logger, LoggerAdapter]] = None,
-            **kwargs
+        self,
+        page: Page,
+        ui_config: WebSelectorConfig,
+        log: Optional[Union[Logger, LoggerAdapter]] = None,
+        **kwargs,
     ) -> None:
         self.log = log or camouchatLogger
         self.page = page

@@ -34,10 +34,11 @@ class ReplyCapable(ReplyCapableInterface):
         return cls._instances[page]
 
     def __init__(
-            self,
-            page: Page,
-            ui_config: WebSelectorConfig,
-            log: Optional[Union[LoggerAdapter, Logger]] = None) -> None:
+        self,
+        page: Page,
+        ui_config: WebSelectorConfig,
+        log: Optional[Union[LoggerAdapter, Logger]] = None,
+    ) -> None:
         if hasattr(self, "_initialized") and self._initialized:
             return
         super().__init__(page=page, log=log, ui_config=ui_config)
@@ -46,11 +47,11 @@ class ReplyCapable(ReplyCapableInterface):
         self._initialized = True
 
     async def reply(
-            self,
-            message: Message,  # type: ignore[override]
-            humanize: HumanInteractionController,  # type: ignore[override]
-            text: Optional[str],
-            **kwargs,
+        self,
+        message: Message,  # type: ignore[override]
+        humanize: HumanInteractionController,  # type: ignore[override]
+        text: Optional[str],
+        **kwargs,
     ) -> bool:
         """Reply to a message with optional text."""
         try:
@@ -90,7 +91,7 @@ class ReplyCapable(ReplyCapableInterface):
 
         data_id = str(message.data_id)
         is_incoming = getattr(message, "direction", "IN") == "IN"
-        
+
         retries = 20
         delay = 1.0
 
@@ -114,7 +115,7 @@ class ReplyCapable(ReplyCapableInterface):
                     # Calculate click target: 20% from left for IN, 20% from right (80%) for OUT
                     rel_x = dims["width"] * (0.2 if is_incoming else 0.8)
                     rel_y = dims["height"] / 2
-                    
+
                     abs_x = dims["x"] + rel_x
                     abs_y = dims["y"] + rel_y
 
@@ -124,10 +125,7 @@ class ReplyCapable(ReplyCapableInterface):
                         f"Double-clicking CDP coordinates ({abs_x}, {abs_y})"
                     )
                     await self.page.mouse.click(
-                        x=abs_x, 
-                        y=abs_y, 
-                        click_count=2, 
-                        delay=random.randint(55, 70)
+                        x=abs_x, y=abs_y, click_count=2, delay=random.randint(55, 70)
                     )
                     await self.page.wait_for_timeout(500)
                     return True

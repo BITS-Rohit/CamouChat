@@ -30,7 +30,12 @@ class Login(LoginInterface):
             cls._instances[page] = instance
         return cls._instances[page]
 
-    def __init__(self, page: Page, UIConfig: WebSelectorConfig, log: Optional[Union[Logger, LoggerAdapter]] = None):
+    def __init__(
+        self,
+        page: Page,
+        UIConfig: WebSelectorConfig,
+        log: Optional[Union[Logger, LoggerAdapter]] = None,
+    ):
         if hasattr(self, "_initialized") and self._initialized:
             return
         if page is None:

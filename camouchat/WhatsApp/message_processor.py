@@ -60,14 +60,14 @@ class MessageProcessor(MessageProcessorInterface):
         return cls._instances[page]
 
     def __init__(
-            self,
-            chat_processor: ChatProcessor,
-            page: Page,
-            ui_config: WebSelectorConfig,
-            storage_obj: Optional[StorageInterface] = None,
-            filter_obj: Optional[MessageFilter] = None,
-            encryption_key: Optional[bytes] = None,
-            log: Optional[Union[Logger, LoggerAdapter]] = None
+        self,
+        chat_processor: ChatProcessor,
+        page: Page,
+        ui_config: WebSelectorConfig,
+        storage_obj: Optional[StorageInterface] = None,
+        filter_obj: Optional[MessageFilter] = None,
+        encryption_key: Optional[bytes] = None,
+        log: Optional[Union[Logger, LoggerAdapter]] = None,
     ) -> None:
         if hasattr(self, "_initialized") and self._initialized:
             return
@@ -119,9 +119,7 @@ class MessageProcessor(MessageProcessorInterface):
         """
         assert self._hmac_key is not None
         return hmac.new(  # type: ignore[attr-defined]
-            self._hmac_key,
-            chat_name.encode(),
-            hashlib.sha256
+            self._hmac_key, chat_name.encode(), hashlib.sha256
         ).hexdigest()
 
     def _encrypt_chat_name(self, chat_name: str) -> tuple[str, str, str]:
@@ -139,11 +137,7 @@ class MessageProcessor(MessageProcessorInterface):
         )
 
     @staticmethod
-    async def sort_messages \
-                    (
-                    msgList: Sequence[Message],
-                    incoming: bool
-            ) -> List[Message]:
+    async def sort_messages(msgList: Sequence[Message], incoming: bool) -> List[Message]:
         """Filter messages by direction (incoming or outgoing)."""
         if not msgList:
             raise MessageListEmptyError("Empty list passed in sort messages.")
@@ -153,12 +147,7 @@ class MessageProcessor(MessageProcessorInterface):
         return [msg for msg in msgList if msg.direction == "out"]
 
     @ensure_chat_clicked(lambda self, chat: self.chat_processor._click_chat(chat))
-    async def _get_wrapped_Messages(
-            self,
-            chat: Chat,
-            retry: int,
-            **kwargs
-    ) -> List[Message]:
+    async def _get_wrapped_Messages(self, chat: Chat, retry: int, **kwargs) -> List[Message]:
 
         sc = self.UIConfig
 
@@ -190,7 +179,9 @@ class MessageProcessor(MessageProcessorInterface):
                     wrapped_list.append(
                         Message(
                             message_ui=msg,
-                            direction="in" if await msg.locator(".message-in").count() > 0 else "out",
+                            direction=(
+                                "in" if await msg.locator(".message-in").count() > 0 else "out"
+                            ),
                             raw_data=text,
                             parent_chat=chat,
                             data_id=data_id,
@@ -215,13 +206,13 @@ class MessageProcessor(MessageProcessorInterface):
         raise MessageProcessorError("Unreachable state reached in message extraction.")
 
     async def fetch_messages(  # type: ignore[override]
-            self, chat: Chat, retry: Optional[int] = 5, **kwargs
+        self, chat: Chat, retry: Optional[int] = 5, **kwargs
     ) -> List[Message]:
         """Fetch, optionally encrypt, store, and filter messages from a chat.
         param :
             chat (Chat): Chat to fetch messages from.
-            retry (int): Number of times to retry the request. Default set to 5 
-        kwargs : 
+            retry (int): Number of times to retry the request. Default set to 5
+        kwargs :
             only_new (bool): If True, returns only new messages.
         """
 
@@ -248,20 +239,14 @@ class MessageProcessor(MessageProcessorInterface):
 
                 if raw:
                     try:
-                        nonce, ciphertext = self.encryptor.encrypt_message(
-                            raw, msg.message_id
-                        )
+                        nonce, ciphertext = self.encryptor.encrypt_message(raw, msg.message_id)
                         msg.encrypted_message = base64.b64encode(ciphertext).decode()
                         msg.encryption_nonce = base64.b64encode(nonce).decode()
                         msg.raw_data = ""
                     except Exception as e:
-                        self.log.warning(
-                            f"Failed to encrypt message {msg.message_id}: {e}"
-                        )
+                        self.log.warning(f"Failed to encrypt message {msg.message_id}: {e}")
                 else:
-                    self.log.debug(
-                        f"Skipping encryption (non-text): {msg.message_id}"
-                    )
+                    self.log.debug(f"Skipping encryption (non-text): {msg.message_id}")
 
                 msg.encrypted_chat_name = enc_chat_b64
                 msg.chat_name_nonce = chat_nonce_b64

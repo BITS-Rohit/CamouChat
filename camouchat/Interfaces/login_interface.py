@@ -14,7 +14,12 @@ from camouchat.Interfaces.web_ui_selector import WebUISelectorCapable
 class LoginInterface(ABC):
     """Base interface for authentication handlers."""
 
-    def __init__(self, page: Page, UIConfig: WebUISelectorCapable, log: Optional[Union[Logger, LoggerAdapter]] = None):
+    def __init__(
+        self,
+        page: Page,
+        UIConfig: WebUISelectorCapable,
+        log: Optional[Union[Logger, LoggerAdapter]] = None,
+    ):
         self.page = page
         self.UIConfig = UIConfig
         self.log = log or camouchatLogger

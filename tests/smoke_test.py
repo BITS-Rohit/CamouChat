@@ -1,6 +1,7 @@
 """
 Smoke Test File to test every module before pushing to release.
 """
+
 import asyncio
 from asyncio import Queue
 from typing import List
@@ -10,14 +11,15 @@ from camouchat.BrowserManager import (
     Platform,
     BrowserForgeCompatible,
     ProfileManager,
-    CamoufoxBrowser
+    CamoufoxBrowser,
 )
 from camouchat.Filter import MessageFilter
 from camouchat.StorageDB import SQLAlchemyStorage, StorageType
 from camouchat.WhatsApp import (
     Login,
     WebSelectorConfig,
-    ChatProcessor, MessageProcessor,
+    ChatProcessor,
+    MessageProcessor,
 )
 from camouchat.WhatsApp.models import Chat, Message
 from camouchat.camouchat_logger import camouchatLogger
@@ -28,9 +30,7 @@ async def main():
     # 1. Profile
     pm = ProfileManager()
     profile = pm.create_profile(
-        platform=Platform.WHATSAPP,
-        profile_id="Work",
-        storage_type=StorageType.SQLITE
+        platform=Platform.WHATSAPP, profile_id="Work", storage_type=StorageType.SQLITE
     )
 
     # --- ENCRYPTION SETUP ---
@@ -50,13 +50,15 @@ async def main():
     # 2. Browser Config
     browser_forge = BrowserForgeCompatible()
 
-    config = BrowserConfig.from_dict({
-        "platform": Platform.WHATSAPP,
-        "locale": "en-US",
-        "enable_cache": False,
-        "headless": False,
-        "fingerprint_obj": browser_forge,
-    })
+    config = BrowserConfig.from_dict(
+        {
+            "platform": Platform.WHATSAPP,
+            "locale": "en-US",
+            "enable_cache": False,
+            "headless": False,
+            "fingerprint_obj": browser_forge,
+        }
+    )
 
     # 3. Browser
     browser = CamoufoxBrowser(
@@ -73,9 +75,7 @@ async def main():
     # 5. Login (QR first time)
     login = Login(page=page, UIConfig=ui, log=camouchatLogger)
 
-    await login.login(
-        method=0  # [QR]
-    )
+    await login.login(method=0)  # [QR]
 
     # 6. Chat Fetch
     chat_processor = ChatProcessor(
@@ -84,7 +84,9 @@ async def main():
         ui_config=ui,
     )
     storage = SQLAlchemyStorage.from_profile(profile=profile, queue=Queue(), log=camouchatLogger)
-    M_filter = MessageFilter()  # Using Default setup , LimitTime = 3600, MaxMessagePerWindow = 10 , Window_Seconds = 60
+    M_filter = (
+        MessageFilter()
+    )  # Using Default setup , LimitTime = 3600, MaxMessagePerWindow = 10 , Window_Seconds = 60
 
     print("Fetching chats...\n")
     message_processor = MessageProcessor(
@@ -94,14 +96,15 @@ async def main():
         ui_config=ui,
         chat_processor=chat_processor,
         filter_obj=M_filter,
-        encryption_key=enc_key  # Passing the AES key here
+        encryption_key=enc_key,  # Passing the AES key here
     )
 
-
     from camouchat.WhatsApp import ReplyCapable
+
     reply_obj = ReplyCapable(page=page, ui_config=ui)
 
     from camouchat.WhatsApp import HumanInteractionController
+
     op = HumanInteractionController(page=page, ui_config=ui)
 
     processed = set()
@@ -115,19 +118,27 @@ async def main():
                 print(chat)
                 print("---Entering MessageProcessor...\n")
                 # Using only_new=True to skip processed history.
-                messages: List[Message] = await message_processor.fetch_messages(chat=chat, only_new=True)
+                messages: List[Message] = await message_processor.fetch_messages(
+                    chat=chat, only_new=True
+                )
                 for msg in messages:
                     print(msg)
                     print("---------")
                     if msg.message_id not in processed:
                         if msg.raw_data == "camouchat-hi":  # Reply Back
-                            do_rep = await reply_obj.reply(message=msg, humanize=op, text="Hi From CamouChat")
+                            do_rep = await reply_obj.reply(
+                                message=msg, humanize=op, text="Hi From CamouChat"
+                            )
                             if do_rep:
                                 print(f"Success ---- Replied for {msg.raw_data}  ********** ")
                             else:
-                                print(f"Failed ❌❌❌❌❌❌❌  ---- Replied for {msg.raw_data} ❌❌❌❌❌❌❌❌  ")
+                                print(
+                                    f"Failed ❌❌❌❌❌❌❌  ---- Replied for {msg.raw_data} ❌❌❌❌❌❌❌❌  "
+                                )
                         if msg.raw_data == "shut-down":
-                            do_rep = await reply_obj.reply(message=msg, humanize=op, text="Shutting Down ....")
+                            do_rep = await reply_obj.reply(
+                                message=msg, humanize=op, text="Shutting Down ...."
+                            )
                             if do_rep:
                                 print(f"Success ---- Replied for {msg.raw_data}  ********** ")
 
@@ -144,8 +155,10 @@ async def main():
             # Fetch last 5 messages from DB and decrypt them using the same key
             decrypted_rows = await storage.get_decrypted_messages_async(key=enc_key, limit=5)
             for row in decrypted_rows:
-                status = "Encrypted" if row.get('encryption_nonce') else "Plaintext"
-                print(f"[{status}] Chat: {row.get('parent_chat_name')} | Body: {row.get('raw_data')}")
+                status = "Encrypted" if row.get("encryption_nonce") else "Plaintext"
+                print(
+                    f"[{status}] Chat: {row.get('parent_chat_name')} | Body: {row.get('raw_data')}"
+                )
 
 
 if __name__ == "__main__":
@@ -156,4 +169,5 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"\nTest failed with error: {e}")
         import traceback
+
         traceback.print_exc()

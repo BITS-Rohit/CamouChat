@@ -19,7 +19,7 @@ class BrowserInterface(ABC):
     Implementations handle browser initialization, page management, and cleanup.
     """
 
-    def __init__(self, log : Optional[Union[Logger,LoggerAdapter]] ):
+    def __init__(self, log: Optional[Union[Logger, LoggerAdapter]]):
         self.log = log or camouchatLogger
 
     @abstractmethod

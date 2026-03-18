@@ -19,7 +19,9 @@ class StorageInterface(ABC):
     this interface to ensure consistent behavior across the SDK.
     """
 
-    def __init__(self, queue: asyncio.Queue, log: Optional[Union[Logger,LoggerAdapter]]=None, **kwargs) -> None:
+    def __init__(
+        self, queue: asyncio.Queue, log: Optional[Union[Logger, LoggerAdapter]] = None, **kwargs
+    ) -> None:
         """
         Initialize storage with a queue for batch operations.
 

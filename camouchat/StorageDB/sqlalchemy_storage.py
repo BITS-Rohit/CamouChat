@@ -54,13 +54,13 @@ class SQLAlchemyStorage(StorageInterface):
         return cls._instances[database_url]
 
     def __init__(
-            self,
-            queue: asyncio.Queue,
-            log: Optional[Union[Logger, LoggerAdapter]] = None,
-            database_url: str = "sqlite+aiosqlite:///messages.db",
-            batch_size: int = 50,
-            flush_interval: float = 2.0,
-            echo: bool = False,
+        self,
+        queue: asyncio.Queue,
+        log: Optional[Union[Logger, LoggerAdapter]] = None,
+        database_url: str = "sqlite+aiosqlite:///messages.db",
+        batch_size: int = 50,
+        flush_interval: float = 2.0,
+        echo: bool = False,
     ) -> None:
         if hasattr(self, "_initialized") and self._initialized:
             return
@@ -90,12 +90,12 @@ class SQLAlchemyStorage(StorageInterface):
 
     @classmethod
     def from_profile(
-            cls,
-            profile: ProfileInfo,
-            queue: asyncio.Queue,
-            log: Optional[Union[Logger,LoggerAdapter]],
-            batch_size: int = 50,
-            flush_interval: float = 2.0,
+        cls,
+        profile: ProfileInfo,
+        queue: asyncio.Queue,
+        log: Optional[Union[Logger, LoggerAdapter]],
+        batch_size: int = 50,
+        flush_interval: float = 2.0,
     ) -> "SQLAlchemyStorage":
         """
         Create storage from ProfileInfo.
@@ -154,7 +154,7 @@ class SQLAlchemyStorage(StorageInterface):
             raise StorageError("Database not initialized. Call init_db() first.")
 
         try:
-            async with self._engine.begin() as conn: # type: ignore
+            async with self._engine.begin() as conn:  # type: ignore
                 await conn.run_sync(Base.metadata.create_all)
             self.log.info("Tables created/verified.")
         except Exception as e:
@@ -182,7 +182,7 @@ class SQLAlchemyStorage(StorageInterface):
         if not self._engine:
             return
 
-        async with self._engine.begin() as conn: # type: ignore
+        async with self._engine.begin() as conn:  # type: ignore
             for sql in migration_sqls:
                 try:
                     await conn.execute(text(sql))
@@ -219,7 +219,7 @@ class SQLAlchemyStorage(StorageInterface):
 
                 current_time = asyncio.get_event_loop().time()
                 should_flush = len(batch) >= self.batch_size or (
-                        batch and current_time - last_flush >= self.flush_interval
+                    batch and current_time - last_flush >= self.flush_interval
                 )
 
                 if should_flush and batch:
@@ -432,10 +432,10 @@ class SQLAlchemyStorage(StorageInterface):
                 return []
 
     async def get_decrypted_messages_async(
-            self,
-            key: bytes,
-            limit: int = 1000,
-            offset: int = 0,
+        self,
+        key: bytes,
+        limit: int = 1000,
+        offset: int = 0,
     ) -> List[Dict[str, Any]]:
         """
         Fetch all messages and decrypt body + chat name on-the-fly.

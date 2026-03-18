@@ -359,9 +359,9 @@ class WebSelectorConfig(WebUISelectorCapable):
     async def isSticker(message: ElementHandle) -> bool:
         """Returns True if any sticker type is detected using XPath."""
         return (
-                await WebSelectorConfig.is_animated_sticker(message)
-                or await WebSelectorConfig.is_plain_sticker(message)
-                or await WebSelectorConfig.is_lottie_animation_sticker(message)
+            await WebSelectorConfig.is_animated_sticker(message)
+            or await WebSelectorConfig.is_plain_sticker(message)
+            or await WebSelectorConfig.is_lottie_animation_sticker(message)
         )
 
     # -------------------- Quoted Message Utilities -------------------- #

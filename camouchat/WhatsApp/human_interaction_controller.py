@@ -16,7 +16,9 @@ from playwright.async_api import Page, ElementHandle, Locator
 from playwright.async_api import TimeoutError as PlaywrightTimeoutError, Error as PlaywrightError
 
 from camouchat.Exceptions.base import ElementNotFoundError, HumanizedOperationError
-from camouchat.Interfaces.human_interaction_controller_interface import HumanInteractionControllerInterface
+from camouchat.Interfaces.human_interaction_controller_interface import (
+    HumanInteractionControllerInterface,
+)
 from camouchat.Interfaces.web_ui_selector import WebUISelectorCapable
 
 _clipboard_async_lock = asyncio.Lock()
@@ -28,7 +30,9 @@ _clipboard_file_lock = FileLock(_lock_file_path)
 class HumanInteractionController(HumanInteractionControllerInterface):
     """Simulates human-like typing with variable delays."""
 
-    _instances: weakref.WeakKeyDictionary[Page, HumanInteractionController] = weakref.WeakKeyDictionary()
+    _instances: weakref.WeakKeyDictionary[Page, HumanInteractionController] = (
+        weakref.WeakKeyDictionary()
+    )
     _initialized: bool = False
 
     def __new__(cls, *args, **kwargs) -> HumanInteractionController:
@@ -41,10 +45,10 @@ class HumanInteractionController(HumanInteractionControllerInterface):
         return cls._instances[page]
 
     def __init__(
-            self,
-            page: Page,
-            ui_config: WebUISelectorCapable,
-            log: Optional[Union[Logger, LoggerAdapter]] = None
+        self,
+        page: Page,
+        ui_config: WebUISelectorCapable,
+        log: Optional[Union[Logger, LoggerAdapter]] = None,
     ) -> None:
 
         if hasattr(self, "_initialized") and self._initialized:
@@ -92,9 +96,7 @@ class HumanInteractionController(HumanInteractionControllerInterface):
             return await self._Instant_fill(text=text, source=source)
 
     async def _ensure_clean_input(
-            self,
-            source: Union[ElementHandle, Locator],
-            retries: int = 3
+        self, source: Union[ElementHandle, Locator], retries: int = 3
     ) -> None:
 
         for attempt in range(1, retries + 1):
@@ -117,9 +119,8 @@ class HumanInteractionController(HumanInteractionControllerInterface):
                     self.log.warning("Failed to clear input after retries")
                     raise
 
-
     async def _Instant_fill(
-            self, text: str, source: Optional[Union[ElementHandle, Locator]]
+        self, text: str, source: Optional[Union[ElementHandle, Locator]]
     ) -> bool:
         """Fallback to instant fill when typing fails."""
         if not source:

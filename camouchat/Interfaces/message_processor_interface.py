@@ -23,12 +23,11 @@ class MessageProcessorInterface(ABC):
 
     def __init__(
         self,
-
         page: Page,
         UIConfig: WebSelectorConfig,
-        storage_obj: StorageInterface ,
-        filter_obj: MessageFilter ,
-        log: Optional[Union[LoggerAdapter, Logger]]
+        storage_obj: StorageInterface,
+        filter_obj: MessageFilter,
+        log: Optional[Union[LoggerAdapter, Logger]],
     ):
         self.storage = storage_obj
         self.filter = filter_obj
@@ -37,11 +36,11 @@ class MessageProcessorInterface(ABC):
         self.UIConfig = UIConfig
 
     @abstractmethod
-    async def _get_wrapped_Messages(self, retry: int,  **kwargs) -> List[T]:
+    async def _get_wrapped_Messages(self, retry: int, **kwargs) -> List[T]:
         """Extract and wrap messages from UI elements."""
         ...
 
     @abstractmethod
-    async def fetch_messages(self, chat: ChatInterface, retry: int,  **kwargs) -> List[T]:
+    async def fetch_messages(self, chat: ChatInterface, retry: int, **kwargs) -> List[T]:
         """Fetch messages from a chat with storage and filtering."""
         ...

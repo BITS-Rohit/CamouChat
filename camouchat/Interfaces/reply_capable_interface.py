@@ -7,7 +7,9 @@ from typing import Optional, Union
 
 from playwright.async_api import Page
 
-from camouchat.Interfaces.human_interaction_controller_interface import HumanInteractionControllerInterface
+from camouchat.Interfaces.human_interaction_controller_interface import (
+    HumanInteractionControllerInterface,
+)
 from camouchat.Interfaces.message_interface import MessageInterface
 from camouchat.Interfaces.web_ui_selector import WebUISelectorCapable
 
@@ -16,7 +18,11 @@ class ReplyCapableInterface(ABC):
     """Base interface for message reply operations."""
 
     def __init__(
-        self, page: Page,  ui_config: WebUISelectorCapable,log: Optional[Union[Logger,LoggerAdapter]], **kwargs
+        self,
+        page: Page,
+        ui_config: WebUISelectorCapable,
+        log: Optional[Union[Logger, LoggerAdapter]],
+        **kwargs,
     ) -> None:
         self.page = page
         self.log = log or camouchatLogger

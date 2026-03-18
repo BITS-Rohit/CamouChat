@@ -36,7 +36,13 @@ class MediaCapableInterface(ABC):
     """Base interface for media upload operations."""
 
     @abstractmethod
-    def __init__(self, page: Page, log: Optional[Union[Logger, LoggerAdapter]], UIConfig: WebUISelectorCapable, **kwargs):
+    def __init__(
+        self,
+        page: Page,
+        log: Optional[Union[Logger, LoggerAdapter]],
+        UIConfig: WebUISelectorCapable,
+        **kwargs,
+    ):
         self.page = page
         self.log = log or camouchatLogger
         self.UIConfig = UIConfig

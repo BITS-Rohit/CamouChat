@@ -39,18 +39,14 @@ class ChatProcessor(ChatProcessorInterface):
         return cls._instances[page]
 
     def __init__(
-            self,
-            page: Page,
-            ui_config: WebSelectorConfig,
-            log: Optional[Union[Logger, LoggerAdapter]] = None
+        self,
+        page: Page,
+        ui_config: WebSelectorConfig,
+        log: Optional[Union[Logger, LoggerAdapter]] = None,
     ) -> None:
         if hasattr(self, "_initialized") and self._initialized:
             return
-        super().__init__(
-            page=page,
-            log=log,
-            ui_config=ui_config
-        )
+        super().__init__(page=page, log=log, ui_config=ui_config)
         self.capabilities: Dict[str, bool] = {}
         if self.page is None:
             raise ValueError("page must not be None")
@@ -70,11 +66,9 @@ class ChatProcessor(ChatProcessorInterface):
 
         return ChatList
 
-    async def _get_Wrapped_Chat \
-                    (
-                    self, limit: int,
-                    retry: int
-            ) -> list[Chat]:  # type: ignore[override]
+    async def _get_Wrapped_Chat(
+        self, limit: int, retry: int
+    ) -> list[Chat]:  # type: ignore[override]
         """Extract chat elements and wrap them."""
 
         sc = self.UIConfig
@@ -121,17 +115,14 @@ class ChatProcessor(ChatProcessorInterface):
                 raise ChatProcessorError("Unexpected failure in chat extraction.") from e
 
         raise ChatProcessorError("Unreachable state in chat extraction.")
-    async def _click_chat(
-            self,
-            chat: Optional[Chat],
-            **kwargs
-    ) -> bool:  # type: ignore[override]
+
+    async def _click_chat(self, chat: Optional[Chat], **kwargs) -> bool:  # type: ignore[override]
         """Click on a chat purely using JS coordinates and CDP dispatch.
 
         Playwright's `locator.click()` can deadlock the entire python event loop
         trying to wait for OS mouse pointer stability. By bypassing it and
         sending a raw CDP mouse click, we are completely immune to interference.
-        
+
         It will try repeatedly (up to 20 times, 1 second apart) to grab
         the element's bounding box and click it.
         """

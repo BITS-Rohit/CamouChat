@@ -41,11 +41,11 @@ class ProfileManager:
     # ------------------------------------------------------------------
 
     def _generate_metadata(
-            self,
-            platform: Platform,
-            profile_id: str,
-            storage_type: StorageType = StorageType.SQLITE,
-            database_url: Optional[str] = None
+        self,
+        platform: Platform,
+        profile_id: str,
+        storage_type: StorageType = StorageType.SQLITE,
+        database_url: Optional[str] = None,
     ) -> dict:
         now = datetime.now(timezone.utc).isoformat()
 
@@ -125,11 +125,11 @@ class ProfileManager:
     # ------------------------------------------------------------------
 
     def create_profile(
-            self,
-            platform: Platform,
-            profile_id: str,
-            storage_type: StorageType = StorageType.SQLITE,
-            database_url: Optional[str] = None
+        self,
+        platform: Platform,
+        profile_id: str,
+        storage_type: StorageType = StorageType.SQLITE,
+        database_url: Optional[str] = None,
     ) -> ProfileInfo:
         """Create a new profile; returns the existing one if already present."""
         profile_dir = self.directory.get_profile_dir(platform, profile_id)
@@ -151,7 +151,7 @@ class ProfileManager:
             platform=platform,
             profile_id=profile_id,
             storage_type=storage_type,
-            database_url=database_url
+            database_url=database_url,
         )
         self._write_metadata(platform, profile_id, metadata)
         self.log.info(f"Profile created with name [{profile_id}] & stored at [{profile_dir}]")
@@ -240,7 +240,8 @@ class ProfileManager:
         metadata["encryption"]["created_at"] = datetime.now(timezone.utc).isoformat()
         self._write_metadata(platform, profile_id, metadata)
         self.log.info(
-            f"Encryption enabled for profile : [{profile_id}] , platform : [{platform}] , stored at [{key_file}]")
+            f"Encryption enabled for profile : [{profile_id}] , platform : [{platform}] , stored at [{key_file}]"
+        )
         return raw_key
 
     def get_key(self, platform: Platform, profile_id: str) -> bytes:
@@ -335,7 +336,7 @@ class ProfileManager:
             return True
 
     async def close_profile(self, platform: Platform, profile_id: str, force: bool = False) -> None:
-        """ closes the profile
+        """closes the profile
         :param platform: Platform object
         :param profile_id: Profile ID
         :param force: Force close | Default = False
@@ -381,7 +382,7 @@ class ProfileManager:
         ProfileManager.__dec__()
 
     def activate_profile(
-            self, platform: Platform, profile_id: str, browser_obj: CamoufoxBrowser
+        self, platform: Platform, profile_id: str, browser_obj: CamoufoxBrowser
     ) -> None:
         """
         Activate a profile. Raises if already active with a live PID.

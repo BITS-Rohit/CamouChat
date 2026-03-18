@@ -116,9 +116,7 @@ if not _has_file_handler(logger):
     log_file = DirectoryManager().get_error_trace_file()
     os.makedirs(os.path.dirname(log_file), exist_ok=True)
 
-    file_handler = ConcurrentRotatingFileHandler(
-        log_file, maxBytes=20 * 1024 * 1024, backupCount=3
-    )
+    file_handler = ConcurrentRotatingFileHandler(log_file, maxBytes=20 * 1024 * 1024, backupCount=3)
 
     file_formatter = logging.Formatter(LOG_FORMAT)
     file_handler.setFormatter(file_formatter)
@@ -148,7 +146,9 @@ if not _has_file_handler(_browser_logger):
 # Global wrapped instances
 # -------------------------------
 # By default, use GLOBAL for profile if not specified to maintain backward compatibility.
-camouchatLogger = CamouChatLoggerAdapter(logger, {"profile_id": "GLOBAL", "process_id": os.getpid()})
+camouchatLogger = CamouChatLoggerAdapter(
+    logger, {"profile_id": "GLOBAL", "process_id": os.getpid()}
+)
 browser_logger = CamouChatLoggerAdapter(
     _browser_logger, {"profile_id": "GLOBAL", "process_id": os.getpid()}
 )

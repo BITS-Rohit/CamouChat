@@ -41,7 +41,11 @@ class ProfileInfo:
         db_path = directory.get_database_path(platform, profile_id)
 
         # Fallback to sqlite if database_url doesn't exist in older profiles
-        db_url = metadata.get("database", {}).get("url") or metadata["paths"].get("database_url") or f"sqlite+aiosqlite:///{db_path}"
+        db_url = (
+            metadata.get("database", {}).get("url")
+            or metadata["paths"].get("database_url")
+            or f"sqlite+aiosqlite:///{db_path}"
+        )
 
         return cls(
             profile_id=profile_id,
