@@ -172,9 +172,14 @@ class ChatProcessor(ChatProcessorInterface):
                         f"[_click_chat] Attempt {attempt}/{retries}: "
                         f"Injecting CDP click at {coords['x']}, {coords['y']} for '{chat_name}'."
                     )
-                    await self.page.mouse.click(coords["x"], coords["y"], click_count=1)
+                    await asyncio.sleep(random.uniform(0.2, 0.5))
+
+                    await self.page.mouse.click(
+                        coords["x"] + random.uniform(-2, 2),
+                        coords["y"] + random.uniform(-2, 2),
+                    )
                     return True
-                
+
                 # If no coords, DOM is probably re-rendering. Just fall through to retry.
                 self.log.debug(
                     f"[_click_chat] Attempt {attempt}/{retries}: "
@@ -188,7 +193,7 @@ class ChatProcessor(ChatProcessorInterface):
                     raise ChatClickError(f"Exhausted retries clicking chat '{chat_name}'.")
 
             except CamouChatError:
-                raise
+                raise ChatClickError("CamouChat error in _click_chat.")
 
             except Exception as e:
                 self.log.error(f"[_click_chat] Unexpected error on attempt {attempt}: {e}")

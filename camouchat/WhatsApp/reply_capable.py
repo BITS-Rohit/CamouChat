@@ -8,7 +8,7 @@ import weakref
 from logging import Logger, LoggerAdapter
 from typing import Optional, Union
 
-from playwright.async_api import Page, Locator, Position
+from playwright.async_api import Page
 from playwright.async_api import TimeoutError as PlaywrightTimeoutError
 
 from camouchat.Exceptions.whatsapp import ReplyCapableError
@@ -85,7 +85,6 @@ class ReplyCapable(ReplyCapableInterface):
         - An outer retry loop with a short sleep covers the brief window where
           WhatsApp re-renders a node to update message status ticks (✓ → ✓✓).
         """
-        data_id = message.data_id
         if message is None or not message.data_id:
             raise ReplyCapableError("Message or data_id is missing.")
 
@@ -102,8 +101,6 @@ class ReplyCapable(ReplyCapableInterface):
                     """(id) => {
                         const el = document.querySelector(`div[data-id="${id}"]`);
                         if (!el) return null;
-                        
-                        // Ensure it's in view so coordinates are on-screen
                         el.scrollIntoView({ behavior: 'instant', block: 'center' });
                         
                         const r = el.getBoundingClientRect();
