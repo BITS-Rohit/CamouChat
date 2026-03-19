@@ -1,22 +1,19 @@
-name: Update Contributors Grid
+name: Contributors List 
 
 on:
-  push:
-    branches:
-      - main
+    push:
+        branches:
+            - main
 
 jobs:
-  update-contributors:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    # ------------------------------------------------------------
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Update README
-        uses: akhilmhdh/contributors-readme-action@v2.3.6
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          collaborators: "no"
+    contrib-readme-job:
+        runs-on: ubuntu-latest
+        name: A job to automate contrib in readme
+        permissions:
+          contents: write
+          pull-requests: write
+        steps:
+            - name: Contribute List
+              uses: akhilmhdh/contributors-readme-action@v2.3.11
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
