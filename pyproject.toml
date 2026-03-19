@@ -4,11 +4,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "camouchat"
-version = "0.6"
+version = "0.6.0"
 description = "CamouChat: Anti-detection WhatsApp automation SDK with end-to-end encrypted storage, async SQLite/PostgreSQL, per-profile sandboxing, and human-like browser behaviour"
 readme = "README.md"
 requires-python = ">=3.11"
-license = { text = "MIT" }
+license = "MIT"
 
 authors = [{ name = "BITS-Rohit", email = "rohitguptaradheradhe123@gmail.com" }]
 maintainers = [{ name = "BITS-Rohit", email = "rohitguptaradheradhe123@gmail.com" }]
@@ -45,8 +45,8 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Framework :: AsyncIO",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Natural Language :: English",
 ]
@@ -88,20 +88,21 @@ Repository = "https://github.com/BITS-Rohit/camouchat"
 "Bug Tracker" = "https://github.com/BITS-Rohit/camouchat/issues"
 Changelog = "https://github.com/BITS-Rohit/camouchat/releases"
 
-[tool.setuptools]
-packages = ["camouchat"]
+[tool.setuptools.packages.find]
+include = ["camouchat*"]
 
 [tool.pytest.ini_options]
 minversion = "7.0"
 testpaths = ["tests"]
 asyncio_mode = "auto"
+addopts = "--cov=camouchat --cov-report=term-missing"
 
 [tool.coverage.run]
 source = ["camouchat"]
 
 [tool.black]
 line-length = 100
-target-version = ["py311"]
+target-version = ["py311", "py312", "py313", "py314"]
 
 [tool.mypy]
 python_version = "3.11"
