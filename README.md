@@ -302,17 +302,17 @@ MIT — see [LICENSE](LICENSE)
                 </a>
             </td>
             <td align="center">
-                <a href="https://github.com/OVERDOZZZE">
-                    <img src="https://avatars.githubusercontent.com/u/113797353?v=4" width="60;" alt="OVERDOZZZE"/>
-                    <br />
-                    <sub><b>Saparbekov Nurdan</b></sub>
-                </a>
-            </td>
-            <td align="center">
                 <a href="https://github.com/Vaishnav-Sabari-Girish">
                     <img src="https://avatars.githubusercontent.com/u/88036970?v=4" width="60;" alt="Vaishnav-Sabari-Girish"/>
                     <br />
                     <sub><b>Vaishnav-sabari-girish</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/OVERDOZZZE">
+                    <img src="https://avatars.githubusercontent.com/u/113797353?v=4" width="60;" alt="OVERDOZZZE"/>
+                    <br />
+                    <sub><b>Saparbekov Nurdan</b></sub>
                 </a>
             </td>
             <td align="center">
