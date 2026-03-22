@@ -257,6 +257,13 @@ MIT — see [LICENSE](https://github.com/BITS-Rohit/CamouChat/blob/main/LICENSE)
                 </a>
             </td>
             <td align="center">
+                <a href="https://github.com/bibhupradhanofficial">
+                    <img src="https://avatars.githubusercontent.com/u/77357902?v=4" width="60;" alt="bibhupradhanofficial"/>
+                    <br />
+                    <sub><b>Bibhu Pradhan</b></sub>
+                </a>
+            </td>
+            <td align="center">
                 <a href="https://github.com/xinss-plus">
                     <img src="https://avatars.githubusercontent.com/u/260048405?v=4" width="60;" alt="xinss-plus"/>
                     <br />
