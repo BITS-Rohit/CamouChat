@@ -8,7 +8,7 @@ import hashlib
 import hmac
 import weakref
 from logging import Logger, LoggerAdapter
-from typing import List, Optional, Sequence, Union
+from typing import List, Optional, Sequence, Union, Literal, cast
 
 from playwright.async_api import Page
 
@@ -179,9 +179,7 @@ class MessageProcessor(MessageProcessorInterface[Message, WebSelectorConfig]):
                     wrapped_list.append(
                         Message(
                             message_ui=msg,
-                            direction=(
-                                "in" if await msg.locator(".message-in").count() > 0 else "out"
-                            ),
+                            direction=cast(Literal["in", "out"],"in" if await msg.locator(".message-in").count() > 0 else "out" ),
                             raw_data=text,
                             parent_chat=chat,
                             data_id=data_id,
