@@ -198,7 +198,7 @@ class WebSelectorConfig(WebUISelectorCapable):
         Returns a locator for all messages in the current open chat.
         Each message element has a unique `data-id` and role "row".
         """
-        return self.page.locator('[role="row"] div[data-id]')
+        return await self.page.locator('div[data-id]:has(.copyable-text)')
 
     async def messages_incoming(self) -> Locator:
         """Filter for the personal | group chat incoming messages"""
