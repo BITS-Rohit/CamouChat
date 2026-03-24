@@ -11,7 +11,7 @@ from browserforge.fingerprints import Fingerprint
 from camoufox.async_api import AsyncCamoufox, launch_options
 from playwright.async_api import Page, BrowserContext
 
-from camouchat.BrowserManager import Platform
+from camouchat.BrowserManager.platform_manager import Platform
 from camouchat.BrowserManager.browser_config import BrowserConfig
 from camouchat.BrowserManager.profile_info import ProfileInfo
 from camouchat.Exceptions.base import BrowserException
@@ -128,7 +128,7 @@ class CamoufoxBrowser(BrowserInterface):
         except Exception as e:
             raise BrowserException("Failed to launch Camoufox browser") from e
 
-    async def get_page(self, platform: Platform) -> Page:
+    async def get_page(self, platform: Optional[Platform] = None, **kwargs) -> Page:
         """
         Returns an available blank page if one exists,
         otherwise creates and returns a new page.
@@ -142,12 +142,12 @@ class CamoufoxBrowser(BrowserInterface):
             browser = await self.get_instance()
 
         # Reuse an existing blank page if possible
-        for page in browser.pages:
+        for p in browser.pages:
             try:
-                if page.url == "about:blank" and not page.is_closed():
+                if p.url == "about:blank" and not p.is_closed():
                     js_path = os.path.join(os.path.dirname(__file__), "wa-js", "wppconnect-wa.js")
-                    await page.add_init_script(path=js_path)
-                    return page
+                    await p.add_init_script(path=js_path)
+                    return p
             except Exception as e:
                 self.log.warning(f"Error checking page state: {e}")
 

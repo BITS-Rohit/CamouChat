@@ -19,7 +19,7 @@ class WapiWrapper:
     """
 
     def __init__(self, page: Page, log: Optional[Union[LoggerAdapter, Logger]] = None):
-        self.log = log or camouchatLogger()
+        self.log = log or camouchatLogger
         self.page = page
 
     async def _evaluate_stealth(self, js_string: str) -> Any:
