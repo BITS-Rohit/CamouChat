@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import asyncio
 from logging import Logger, LoggerAdapter
+from camouchat.camouchat_logger import camouchatLogger
 from typing import List, Dict, Any, Optional, Sequence, Union
 
 from sqlalchemy import select, exists
@@ -113,7 +114,7 @@ class SQLAlchemyStorage(StorageInterface):
         database_url = profile.database_url
         return cls(
             queue=queue,
-            log=log,
+            log=log or camouchatLogger,
             database_url=database_url,
             batch_size=batch_size,
             flush_interval=flush_interval,

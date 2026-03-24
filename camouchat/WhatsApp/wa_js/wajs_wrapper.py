@@ -1,15 +1,13 @@
+import asyncio
+import time
 from logging import Logger, LoggerAdapter
-from camouchat.camouchat_logger import camouchatLogger
 from typing import Any, Callable, Dict, Optional, Union
 
 from playwright.async_api import Page
+
+from camouchat.camouchat_logger import camouchatLogger
 from .wajs_scripts import WAJS_Scripts
-
-
-class WAJSError(Exception):
-    """Exception raised when wa-js execution fails structurally or within React."""
-
-    pass
+from camouchat.Exceptions.whatsapp import WAJSError
 
 
 class WapiWrapper:
@@ -45,10 +43,8 @@ class WapiWrapper:
         return response.get("data")
 
     # --- 1. SETUP & CORE ---
-    async def wait_for_ready(self, timeout_ms: float = 30000) -> bool:
+    async def wait_for_ready(self, timeout_ms: float = 60000) -> bool:
         """Wait until `wa-js` completes Webpack hijack and exposes WPP"""
-        import asyncio
-        import time
 
         self.log.info("Awaiting WPP.isReady flag via Main World polling...")
 
@@ -65,7 +61,7 @@ class WapiWrapper:
             await asyncio.sleep(0.5)
 
         self.log.error("wa-js failed to initialize before timeout.")
-        raise WAJSError("WPP Initialization Timeout")
+        raise WAJSError(f"WPP Initialization Timeout (waited {timeout_ms/1000} sec)")
 
     async def is_authenticated(self) -> bool:
         return await self._evaluate_stealth(WAJS_Scripts.is_authenticated())

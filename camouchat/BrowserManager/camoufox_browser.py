@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 from logging import Logger, LoggerAdapter
+from pathlib import Path
 from typing import Optional, Dict, Union
 
 import camoufox.exceptions
@@ -11,8 +12,8 @@ from browserforge.fingerprints import Fingerprint
 from camoufox.async_api import AsyncCamoufox, launch_options
 from playwright.async_api import Page, BrowserContext
 
-from camouchat.BrowserManager.platform_manager import Platform
 from camouchat.BrowserManager.browser_config import BrowserConfig
+from camouchat.BrowserManager.platform_manager import Platform
 from camouchat.BrowserManager.profile_info import ProfileInfo
 from camouchat.Exceptions.base import BrowserException
 from camouchat.Interfaces.browser_interface import BrowserInterface
@@ -30,10 +31,10 @@ class CamoufoxBrowser(BrowserInterface):
     Map: Dict[int, BrowserContext] = {}
 
     def __init__(
-        self,
-        config: BrowserConfig,
-        profile: ProfileInfo,
-        log: Optional[Union[Logger, LoggerAdapter]] = None,
+            self,
+            config: BrowserConfig,
+            profile: ProfileInfo,
+            log: Optional[Union[Logger, LoggerAdapter]] = None,
     ) -> None:
         """
         Initializes the Camoufox browser manager.
@@ -141,11 +142,12 @@ class CamoufoxBrowser(BrowserInterface):
         if browser is None:
             browser = await self.get_instance()
 
+        js_path = Path(__file__).resolve().parents[1] / "WhatsApp" / "wa_js" / "wppconnect-wa.js"
+
         # Reuse an existing blank page if possible
         for p in browser.pages:
             try:
                 if p.url == "about:blank" and not p.is_closed():
-                    js_path = os.path.join(os.path.dirname(__file__), "wa-js", "wppconnect-wa.js")
                     await p.add_init_script(path=js_path)
                     return p
             except Exception as e:
@@ -154,7 +156,6 @@ class CamoufoxBrowser(BrowserInterface):
         # Otherwise create a new page
         try:
             page: Page = await browser.new_page()
-            js_path = os.path.join(os.path.dirname(__file__), "wa-js", "wppconnect-wa.js")
             await page.add_init_script(path=js_path)
             return page
         except Exception as e:
