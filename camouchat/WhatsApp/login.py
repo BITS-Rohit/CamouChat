@@ -7,7 +7,7 @@ from logging import Logger, LoggerAdapter
 import random
 
 import weakref
-from playwright.async_api import Page, TimeoutError as PlaywrightTimeoutError, Locator
+from playwright.async_api import Page, TimeoutError as PlaywrightTimeoutError, Error as PlaywrightError, Locator
 from typing import Optional, Union
 from camouchat.Exceptions.whatsapp import LoginError
 from camouchat.Interfaces.login_interface import LoginInterface
@@ -71,11 +71,23 @@ class Login(LoginInterface):
         number: Optional[int] = kwargs.get("number")
         country: Optional[str] = kwargs.get("country")
 
-        try:
-            await self.page.goto(link, timeout=60_000)
-            await self.page.wait_for_load_state("networkidle", timeout=50_000)
-        except PlaywrightTimeoutError as e:
-            raise LoginError("Timeout while loading WhatsApp Web") from e
+        _max_retries = 3
+        for _attempt in range(_max_retries):
+            try:
+                await self.page.goto(link, timeout=60_000)
+                await self.page.wait_for_load_state("networkidle", timeout=50_000)
+                break  # success
+            except PlaywrightTimeoutError as e:
+                raise LoginError("Timeout while loading WhatsApp Web") from e
+            except PlaywrightError as e:
+                if "NS_BINDING_ABORTED" in str(e) and _attempt < _max_retries - 1:
+                    self.log.warning(
+                        "[Login] NS_BINDING_ABORTED on attempt %d/%d — retrying in 2s...",
+                        _attempt + 1, _max_retries
+                    )
+                    await asyncio.sleep(2)
+                    continue
+                raise LoginError(f"Navigation failed: {e}") from e
 
         if method == 0:
             success = await self.__qr_login(wait_time)
