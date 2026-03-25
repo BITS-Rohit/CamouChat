@@ -30,6 +30,7 @@ tweakio_browser_playwright
 tests/learn
 
 docs/test*.py
+docs/smoke*.py
 camouchat/BrowserManager/profile_context.py
 docs/Logger
 
