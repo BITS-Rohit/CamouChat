@@ -29,8 +29,10 @@ tweakio_browser_playwright
 .vscode
 tests/learn
 
-docs/test.py
+docs/test*.py
+docs/smoke*.py
 camouchat/BrowserManager/profile_context.py
 docs/Logger
 
 wget-*
+camouchat/WhatsApp/wa-js/Hierarchy.md

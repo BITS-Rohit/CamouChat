@@ -165,3 +165,10 @@ class MenuError(MediaCapableError):
     """Menu Error for Media Sending"""
 
     pass
+
+
+# ----------------- WAjsError ----------------------
+class WAJSError(WhatsAppError):
+    """WA-JS Error"""
+
+    pass
