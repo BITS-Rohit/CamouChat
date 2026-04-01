@@ -58,7 +58,7 @@ multidict==6.7.1
     # via
     #   aiohttp
     #   yarl
-numpy==2.4.3
+numpy==2.4.4
     # via camoufox
 orjson==3.11.7
     # via camoufox
