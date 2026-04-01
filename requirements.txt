@@ -84,7 +84,7 @@ pysocks==1.7.1
     # via camoufox
 pyyaml==6.0.3
     # via camoufox
-requests==2.33.0
+requests==2.33.1
     # via
     #   camoufox
     #   geoip2
