@@ -298,6 +298,14 @@ postgresql = [
     { name = "asyncpg" },
 ]
 
+[package.dev-dependencies]
+dev = [
+    { name = "black" },
+    { name = "deptry" },
+    { name = "mypy" },
+    { name = "ruff" },
+]
+
 [package.metadata]
 requires-dist = [
     { name = "aiomysql", marker = "extra == 'mysql'", specifier = ">=0.2.0" },
@@ -322,6 +330,14 @@ requires-dist = [
     { name = "sqlalchemy", specifier = ">=2.0.36" },
 ]
 provides-extras = ["postgresql", "mysql", "dev"]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "black", specifier = ">=26.3.1" },
+    { name = "deptry", specifier = ">=0.25.1" },
+    { name = "mypy", specifier = ">=1.20.0" },
+    { name = "ruff", specifier = ">=0.15.8" },
+]
 
 [[package]]
 name = "camoufox"

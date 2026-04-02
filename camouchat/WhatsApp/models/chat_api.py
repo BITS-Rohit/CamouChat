@@ -12,7 +12,7 @@ from typing import Any
 class ChatModelAPI:
     """
     Normalized Data Model for a WhatsApp Chat.
-    
+
     Attributes:
         id_serialized (str): The unique serialized JID (WhatsApp ID) of the chat.
         unreadCount (int | None): Number of unread messages currently in this chat.
@@ -33,30 +33,31 @@ class ChatModelAPI:
         canSend (bool | None): True if you are technically able to type in this chat.
         proxyName (str | None): Internal Meta proxy type identifier (chat, contact, or msg).
         isCommunity (bool | None): Derived property: True if this is a WhatsApp Community or Announcement parent.
-    
+
 
     If the specified field is None , its Mostly means the webpack was not successfully patched the whatsapp.
     Or the webpack ids are changed due to silent update from whatsapp.
     """
-    id_serialized: str
-    unreadCount: int | None 
-    isAutoMuted: bool | None 
-    timestamp: int | None 
-    isArchived: bool | None 
-    isLocked: bool | None 
-    isNotSpam: bool | None = True
-    disappearingModeTrigger: str | None 
-    disappearingModeInitiator: str | None 
-    unreadMentionCount: int | None 
-    lastChatEntryTimestamp: int | None 
-    isOpened: bool | None 
-    isReadOnly: bool | None 
-    isTrusted: bool | None 
-    formattedTitle: str | None 
-    groupSafetyChecked: bool | None 
-    canSend: bool | None 
-    proxyName: str | None 
-    isCommunity: bool | None 
+
+    id_serialized: str | None
+    unreadCount: int | None
+    isAutoMuted: bool | None
+    timestamp: int | None
+    isArchived: bool | None
+    isLocked: bool | None
+    isNotSpam: bool | None 
+    disappearingModeTrigger: str | None
+    disappearingModeInitiator: str | None
+    unreadMentionCount: int | None
+    lastChatEntryTimestamp: int | None
+    isOpened: bool | None
+    isReadOnly: bool | None
+    isTrusted: bool | None
+    formattedTitle: str | None
+    groupSafetyChecked: bool | None
+    canSend: bool | None
+    proxyName: str | None
+    isCommunity: bool | None
 
     @classmethod
     def from_dict(cls, data: dict) -> "ChatModelAPI":

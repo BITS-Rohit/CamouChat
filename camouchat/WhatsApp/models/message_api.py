@@ -1,12 +1,13 @@
 from dataclasses import dataclass
 from typing import Any, Dict
 
+
 @dataclass
 class MessageModelAPI:
     """
     Normalized Data Model for a WhatsApp Message.
     Parses the raw Webpack dictionary into a clean, predictable Python object.
-    
+
     Attributes:
         id_serialized (str | None): Full unique ID (e.g., 'false_1234@c.us_ABCDEF').
         rowId (int | None): IndexedDB row ID (useful for pagination/anchors).
@@ -45,10 +46,11 @@ class MessageModelAPI:
         stickerSentTs (int | None): Original creation timestamp for stickers (used for "Recents" sorting).
         isViewed (bool | None): Local UI state: True if the bubble no longer has the green unread dot.
         vcardList (list | None): List of vCards if MsgType == "vcard" or "multi_vcard".
-    
+
     If the specified field is None , its Mostly means the webpack was not successfully patched the whatsapp.
     Or the webpack ids are changed due to silent update from whatsapp.
     """
+
     id_serialized: str | None
     rowId: int | None
     fromMe: bool | None
@@ -82,7 +84,7 @@ class MessageModelAPI:
     isViewOnce: bool | None
     isQuestion: bool | None
     questionResponsesCount: int | None
-    readQuestionResponsesCount: int | None 
+    readQuestionResponsesCount: int | None
     stickerSentTs: int | None
     isViewed: bool | None
     vcardList: list | None
@@ -93,6 +95,7 @@ class MessageModelAPI:
         Safely maps the raw WhatsApp WA-JS dictionary to this Python dataclass.
         Automatically handles '__x_' prefixes and nested ID fields.
         """
+
         def get_val(key: str, default: Any = None) -> Any:
             return data.get(key, data.get(f"__x_{key}", default))
 
@@ -105,18 +108,15 @@ class MessageModelAPI:
         return cls(
             id_serialized=id_serialized,
             rowId=get_val("rowId"),
-            
             fromMe=from_me,
             jid_From=get_val("from"),
             jid_To=get_val("to"),
             author=get_val("author"),
             pushname=get_val("notifyName") or get_val("pushname"),
             broadcast=get_val("broadcast"),
-            
             MsgType=get_val("type"),
             body=get_val("body"),
             caption=get_val("caption"),
-            
             timestamp=get_val("t") or get_val("timestamp"),
             ack=get_val("ack", 0),
             isNew=get_val("isNew"),
@@ -127,24 +127,22 @@ class MessageModelAPI:
             ephemeralDuration=get_val("ephemeralDuration", 0),
             isAvatar=get_val("isAvatar"),
             isVideoCallMessage=get_val("isVideoCall"),
-            
             fromQuotedMsg=bool(get_val("quotedMsg")),
             isQuotedMsgAvailable=not get_val("quotedStanzaID") and bool(get_val("quotedMsg")),
-            quotedMsgId=get_val("quotedStanzaID") or (get_val("msgContextInfo") or {}).get("stanzaId"),
-            quotedParticipant=get_val("quotedParticipant") or (get_val("msgContextInfo") or {}).get("participant"),
-            
+            quotedMsgId=get_val("quotedStanzaID")
+            or (get_val("msgContextInfo") or {}).get("stanzaId"),
+            quotedParticipant=get_val("quotedParticipant")
+            or (get_val("msgContextInfo") or {}).get("participant"),
             mimetype=get_val("mimetype"),
             directPath=get_val("directPath"),
             mediaKey=get_val("mediaKey"),
             size=get_val("size") or get_val("fileLength"),
             duration=get_val("duration"),
             isViewOnce=get_val("isViewOnce"),
-            
             isQuestion=get_val("isAnyQuestion") or (get_val("type") == "poll_creation"),
             questionResponsesCount=get_val("pollOptions", []) and len(get_val("pollOptions", [])),
-            readQuestionResponsesCount=None, # Extracted dynamically if needed via poll API
-            
+            readQuestionResponsesCount=None,  # Extracted dynamically if needed via poll API
             stickerSentTs=get_val("stickerSentTs"),
             isViewed=get_val("viewed"),
-            vcardList=get_val("vcardList")
+            vcardList=get_val("vcardList"),
         )
