@@ -94,3 +94,31 @@ class ChatModelAPI:
             proxyName=get_val("proxyName") or None,
             isCommunity=is_comm,
         )
+    
+    def __str__(self):
+        return (
+            f"ChatModelAPI(\n"
+            f"    id_serialized={self.id_serialized!r},\n"
+            f"    unreadCount={self.unreadCount},\n"
+            f"    isAutoMuted={self.isAutoMuted},\n"
+            f"    timestamp={self.timestamp},\n"
+            f"    isArchived={self.isArchived},\n"
+            f"    isLocked={self.isLocked},\n"
+            f"    isNotSpam={self.isNotSpam},\n"
+            f"    disappearingModeTrigger={self.disappearingModeTrigger!r},\n"
+            f"    disappearingModeInitiator={self.disappearingModeInitiator!r},\n"
+            f"    unreadMentionCount={self.unreadMentionCount},\n"
+            f"    lastChatEntryTimestamp={self.lastChatEntryTimestamp},\n"
+            f"    isOpened={self.isOpened},\n"
+            f"    isReadOnly={self.isReadOnly},\n"
+            f"    isTrusted={self.isTrusted},\n"
+            f"    formattedTitle={self.formattedTitle!r},\n"
+            f"    groupSafetyChecked={self.groupSafetyChecked},\n"
+            f"    canSend={self.canSend},\n"
+            f"    proxyName={self.proxyName!r},\n"
+            f"    isCommunity={self.isCommunity}\n"
+            f")"
+        )
+
+    def __repr__(self):
+        return self.__str__()

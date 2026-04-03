@@ -107,42 +107,89 @@ class MessageModelAPI:
 
         return cls(
             id_serialized=id_serialized,
-            rowId=get_val("rowId"),
+            rowId=get_val("rowId") or None,
             fromMe=from_me,
-            jid_From=get_val("from"),
-            jid_To=get_val("to"),
-            author=get_val("author"),
-            pushname=get_val("notifyName") or get_val("pushname"),
-            broadcast=get_val("broadcast"),
-            MsgType=get_val("type"),
-            body=get_val("body"),
-            caption=get_val("caption"),
-            timestamp=get_val("t") or get_val("timestamp"),
-            ack=get_val("ack", 0),
-            isNew=get_val("isNew"),
-            isStarMsg=get_val("star"),
-            isForwarded=get_val("isForwarded"),
-            forwardsCount=get_val("forwardingScore", 0) or get_val("forwardsCount", 0),
-            hasReaction=get_val("hasReaction"),
-            ephemeralDuration=get_val("ephemeralDuration", 0),
-            isAvatar=get_val("isAvatar"),
-            isVideoCallMessage=get_val("isVideoCall"),
-            fromQuotedMsg=bool(get_val("quotedMsg")),
-            isQuotedMsgAvailable=not get_val("quotedStanzaID") and bool(get_val("quotedMsg")),
+            jid_From=get_val("from") or None,
+            jid_To=get_val("to") or None,
+            author=get_val("author") or None,
+            pushname=get_val("notifyName") or get_val("pushname") or None,
+            broadcast=get_val("broadcast") or None,
+            MsgType=get_val("type") or None,
+            body=get_val("body") or None,
+            caption=get_val("caption") or None,
+            timestamp=get_val("t") or get_val("timestamp") or None,
+            ack=get_val("ack", 0) or None,
+            isNew=get_val("isNew") or None,
+            isStarMsg=get_val("star") or None,
+            isForwarded=get_val("isForwarded") or None,
+            forwardsCount=get_val("forwardingScore", 0) or get_val("forwardsCount", 0) or None,
+            hasReaction=get_val("hasReaction") or None,
+            ephemeralDuration=get_val("ephemeralDuration", 0) or None,
+            isAvatar=get_val("isAvatar") or None,
+            isVideoCallMessage=get_val("isVideoCall") or None,
+            fromQuotedMsg=bool(get_val("quotedMsg")) or None,
+            isQuotedMsgAvailable=not get_val("quotedStanzaID") and bool(get_val("quotedMsg")) or None,
             quotedMsgId=get_val("quotedStanzaID")
-            or (get_val("msgContextInfo") or {}).get("stanzaId"),
+            or (get_val("msgContextInfo") or {}).get("stanzaId") or None,
             quotedParticipant=get_val("quotedParticipant")
-            or (get_val("msgContextInfo") or {}).get("participant"),
-            mimetype=get_val("mimetype"),
-            directPath=get_val("directPath"),
-            mediaKey=get_val("mediaKey"),
-            size=get_val("size") or get_val("fileLength"),
-            duration=get_val("duration"),
-            isViewOnce=get_val("isViewOnce"),
-            isQuestion=get_val("isAnyQuestion") or (get_val("type") == "poll_creation"),
-            questionResponsesCount=get_val("pollOptions", []) and len(get_val("pollOptions", [])),
+            or (get_val("msgContextInfo") or {}).get("participant") or None,
+            mimetype=get_val("mimetype") or None,
+            directPath=get_val("directPath") or None,
+            mediaKey=get_val("mediaKey") or None,
+            size=get_val("size") or get_val("fileLength") or None,
+            duration=get_val("duration") or None,
+            isViewOnce=get_val("isViewOnce") or None,
+            isQuestion=get_val("isAnyQuestion") or (get_val("type") == "poll_creation") or None,
+            questionResponsesCount=get_val("pollOptions", []) and len(get_val("pollOptions", [])) or None,
             readQuestionResponsesCount=None,  # Extracted dynamically if needed via poll API
-            stickerSentTs=get_val("stickerSentTs"),
-            isViewed=get_val("viewed"),
-            vcardList=get_val("vcardList"),
+            stickerSentTs=get_val("stickerSentTs") or None,
+            isViewed=get_val("viewed") or None,
+            vcardList=get_val("vcardList") or None,
         )
+    
+    def __str__(self):
+        return (
+            f"MessageModelAPI(\n"
+            f"    id_serialized={self.id_serialized!r},\n"
+            f"    rowId={self.rowId},\n"
+            f"    fromMe={self.fromMe},\n"
+            f"    jid_From={self.jid_From!r},\n"
+            f"    jid_To={self.jid_To!r},\n"
+            f"    author={self.author!r},\n"
+            f"    pushname={self.pushname!r},\n"
+            f"    broadcast={self.broadcast},\n"
+            f"    MsgType={self.MsgType!r},\n"
+            f"    body={self.body!r},\n"
+            f"    caption={self.caption!r},\n"
+            f"    timestamp={self.timestamp},\n"
+            f"    ack={self.ack},\n"
+            f"    isNew={self.isNew},\n"
+            f"    isStarMsg={self.isStarMsg},\n"
+            f"    isForwarded={self.isForwarded},\n"
+            f"    forwardsCount={self.forwardsCount},\n"
+            f"    hasReaction={self.hasReaction},\n"
+            f"    ephemeralDuration={self.ephemeralDuration},\n"
+            f"    isAvatar={self.isAvatar},\n"
+            f"    isVideoCallMessage={self.isVideoCallMessage},\n"
+            f"    fromQuotedMsg={self.fromQuotedMsg},\n"
+            f"    isQuotedMsgAvailable={self.isQuotedMsgAvailable},\n"
+            f"    quotedMsgId={self.quotedMsgId!r},\n"
+            f"    quotedParticipant={self.quotedParticipant!r},\n"
+            f"    mimetype={self.mimetype!r},\n"
+            f"    directPath={self.directPath!r},\n"
+            f"    mediaKey={self.mediaKey!r},\n"
+            f"    size={self.size},\n"
+            f"    duration={self.duration},\n"
+            f"    isViewOnce={self.isViewOnce},\n"
+            f"    isQuestion={self.isQuestion},\n"
+            f"    questionResponsesCount={self.questionResponsesCount},\n"
+            f"    readQuestionResponsesCount={self.readQuestionResponsesCount},\n"
+            f"    stickerSentTs={self.stickerSentTs},\n"
+            f"    isViewed={self.isViewed},\n"
+            f"    vcardList={self.vcardList!r},\n"
+            f")"
+        )
+
+    def __repr__(self):
+        return self.__str__()
+
