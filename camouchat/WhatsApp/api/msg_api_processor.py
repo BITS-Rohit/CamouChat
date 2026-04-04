@@ -13,6 +13,8 @@ Type notation used in docstrings:
 """
 
 import asyncio
+import base64
+from pathlib import Path
 from logging import Logger, LoggerAdapter
 from typing import Any, Callable, Dict, List, Optional, Union
 
@@ -135,7 +137,7 @@ class MessageApiManager:
         self.log.info("MessageApiManager: DOM bridge torn down, all handlers cleared.")
 
     # ──────────────────────────────────────────────
-    # ON-DEMAND RAM PULL METHODS
+    # RAM BASED METHODS
     # ──────────────────────────────────────────────
 
     async def get_messages(
@@ -149,7 +151,8 @@ class MessageApiManager:
         anchor_msg_id: Optional[str] = None,
     ) -> List[MessageModelAPI]:
         """
-        Type: RAM — pulls messages from React MsgStore, zero network cost.
+        [Type: RAM]
+        Pulls messages from React MsgStore with zero network cost.
 
         Args:
             chat_id:        @c.us or @g.us JID.
@@ -178,7 +181,8 @@ class MessageApiManager:
 
     async def get_message_by_id(self, msg_id: str) -> Optional[MessageModelAPI]:
         """
-        Type: RAM — fetch one message by its full serialized ID.
+        [Type: RAM]
+        Fetch one message by its full serialized ID from React memory.
 
         Args:
             msg_id: e.g. 'true_916398014720@c.us_ABCDEF123'
@@ -195,6 +199,179 @@ class MessageApiManager:
 
     async def get_unread(self, chat_id: str) -> List[MessageModelAPI]:
         """
-        Type: RAM — convenience shorthand for unread messages in a chat.
+        [Type: RAM]
+        Convenience shorthand for fetching only unread messages in a chat from memory.
         """
         return await self.get_messages(chat_id, count=-1, only_unread=True)
+
+    async def decrypt_media(
+        self,
+        direct_path: str,
+        media_key_b64: str,
+        media_type: str,
+        msg_id: Optional[str] = None,
+        save_path: Optional[str] = None,
+    ) -> Optional[bytes]:
+        """
+        [Type: RAM Primary / NETWORK Fallback]
+        Extract and decrypt WhatsApp media. Tries to read from the browser Cache API
+        (zero network) first. Falls back to wa-js's CDN downloader if the blob is missing.
+
+        Args:
+            direct_path:   msg['directPath']    — CDN path e.g. "/v/t62.7117-24/..."
+            media_key_b64: msg['mediaKey']      — base64 AES root key (32 bytes)
+            media_type:    msg['type']          — 'image'|'video'|'audio'|'ptt'|'document'|'sticker'
+            msg_id:        msg['id_serialized'] — Required for CDN fallback only.
+            save_path:     Optional filesystem path to write decrypted bytes to.
+
+        Returns:
+            Raw decrypted bytes, or None if both paths fail.
+        """
+        # Primary: Cache API (zero network)
+        b64 = await self._bridge._evaluate_stealth(
+            WAJS_Scripts.decrypt_media(
+                direct_path=direct_path,
+                media_key_b64=media_key_b64,
+                media_type=media_type,
+            )
+        )
+
+        if b64 is None:
+            # Fallback: CDN download (NETWORK)
+            if not msg_id:
+                self.log.warning("decrypt_media: Cache miss & no msg_id passed. Cannot use CDN fallback.")
+                return None
+
+            self.log.info(f"decrypt_media: Cache miss for {direct_path!r} — CDN fallback [NETWORK]")
+            b64 = await self._bridge._evaluate_stealth(WAJS_Scripts.download_media(msg_id=msg_id))
+
+        if not b64:
+            return None
+
+        raw_bytes = base64.b64decode(b64)
+
+        if save_path:
+            Path(save_path).parent.mkdir(parents=True, exist_ok=True)
+            Path(save_path).write_bytes(raw_bytes)
+            self.log.info(f"decrypt_media: Saved {len(raw_bytes):,} bytes → {save_path}")
+
+        return raw_bytes
+
+    _MIME_TO_EXT: Dict[str, str] = {
+        "image/jpeg": ".jpg", "image/png": ".png", "image/webp": ".webp", "image/gif": ".gif",
+        "video/mp4": ".mp4", "video/3gpp": ".3gp", "video/quicktime": ".mov",
+        "audio/ogg": ".ogg", "audio/mp4": ".m4a", "audio/mpeg": ".mp3", "audio/aac": ".aac",
+        "application/pdf": ".pdf", "application/zip": ".zip",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document": ".docx",
+    }
+
+    _TYPE_EXT_FALLBACK: Dict[str, str] = {
+        "image": ".jpg", "video": ".mp4", "audio": ".ogg", "ptt": ".ogg", "sticker": ".webp", "document": ".bin",
+    }
+
+    @staticmethod
+    def _ext_from_mime(mimetype: Optional[str], media_type: str = "image") -> str:
+        """Derive file extension from mimetype, falling back to media_type."""
+        if mimetype:
+            base = mimetype.split(";")[0].strip().lower()
+            if base in MessageApiManager._MIME_TO_EXT:
+                return MessageApiManager._MIME_TO_EXT[base]
+        return MessageApiManager._TYPE_EXT_FALLBACK.get(media_type, ".bin")
+
+    @staticmethod
+    def media_save_path(message: MessageModelAPI, save_dir: str) -> str:
+        """Auto-generate a filesystem path for a media message."""
+        ext = MessageApiManager._ext_from_mime(message.mimetype, message.MsgType or "media")
+        safe_id = (message.id_serialized or "unknown").replace("/", "_").replace("@", "_").replace(":", "_")
+        return str(Path(save_dir) / f"{message.MsgType or 'media'}_{safe_id}{ext}")
+
+    async def extract_media(
+        self,
+        message: MessageModelAPI,
+        save_path: str,
+    ) -> Dict[str, Any]:
+        """
+        [Type: RAM Primary / NETWORK Fallback]
+        High-level media extraction directly from the normalized MessageModelAPI object.
+
+        Args:
+            message:   The populated MessageModelAPI.
+            save_path: Full path where the decrypted file will be written.
+
+        Returns:
+            Dictionary with extraction success state, path, size, and metadata.
+        """
+        direct_path = message.directPath
+        media_key_b64 = message.mediaKey
+        media_type = message.MsgType or "image"
+        msg_id = message.id_serialized
+
+        result: Dict[str, Any] = {
+            "success": False, "type": media_type, "mimetype": message.mimetype,
+            "size_bytes": None, "path": None, "msg_id": msg_id,
+            "view_once": message.isViewOnce, "used_fallback": False, "error": None,
+        }
+
+        if not direct_path:
+            result["error"] = "Message has no directPath — not a downloadable media message."
+            return result
+
+        b64 = None
+        if media_key_b64:
+            b64 = await self._bridge._evaluate_stealth(
+                WAJS_Scripts.decrypt_media(direct_path=direct_path, media_key_b64=media_key_b64, media_type=media_type)
+            )
+
+        if b64 is None:
+            if not msg_id:
+                result["error"] = "Cache miss & no id_serialized — cannot use CDN fallback."
+                return result
+            self.log.info(f"extract_media: Cache miss for {direct_path!r} — CDN fallback [NETWORK]")
+            result["used_fallback"] = True
+            b64 = await self._bridge._evaluate_stealth(WAJS_Scripts.download_media(msg_id=msg_id))
+
+        if not b64:
+            result["error"] = "Both Cache api and CDN fallback returned None — media unavailable."
+            return result
+
+        raw_bytes = base64.b64decode(b64)
+        Path(save_path).parent.mkdir(parents=True, exist_ok=True)
+        Path(save_path).write_bytes(raw_bytes)
+        self.log.info(
+            f"extract_media: [{media_type}] {len(raw_bytes):,} bytes → {save_path}"
+            + (" [CDN fallback]" if result["used_fallback"] else " [Cache api]")
+        )
+
+        result.update({"success": True, "size_bytes": len(raw_bytes), "path": save_path})
+        return result
+
+    # ──────────────────────────────────────────────
+    # INDEX DB BASED METHODS
+    # ──────────────────────────────────────────────
+
+    async def indexdb_get_messages(
+        self,
+        min_row_id: int,
+        limit: int = 50,
+    ) -> List[MessageModelAPI]:
+        """
+        [Type: INDEX DB]
+        Fetch raw message data sequentially from IndexedDB storage across ALL chats directly from disk.
+        Type: RAM (Disk). Messages are retrieved in order from min_row_id onwards.
+        """
+        raw_list = await self._bridge._evaluate_stealth(
+            WAJS_Scripts.indexdb_get_messages(min_row_id=min_row_id, limit=limit)
+        )
+        return [MessageModelAPI.from_dict(r) for r in (raw_list or [])]
+
+    # ──────────────────────────────────────────────
+    # NETWORK BASED METHODS
+    # ──────────────────────────────────────────────
+
+    async def send_text_message(self, chat_id: str, message: str) -> Any:
+        """
+        [Type: NETWORK]
+        Pure API text send. Sends the message entirely over the network.
+        Use only when Playwright UI interaction logic is bypassing the actual input field.
+        """
+        return await self._bridge._evaluate_stealth(WAJS_Scripts.send_text_message(chat_id, message))
