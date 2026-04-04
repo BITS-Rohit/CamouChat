@@ -64,11 +64,17 @@ class ChatApiManager:
         """
         raw_list = await self._bridge._evaluate_stealth(
             WAJS_Scripts.list_chats(
-                count=count, direction=direction, only_users=only_users,
-                only_groups=only_groups, only_communities=only_communities,
-                only_unread=only_unread, only_archived=only_archived,
-                only_newsletter=only_newsletter, with_labels=with_labels,
-                anchor_chat_id=anchor_chat_id, ignore_group_metadata=ignore_group_metadata
+                count=count,
+                direction=direction,
+                only_users=only_users,
+                only_groups=only_groups,
+                only_communities=only_communities,
+                only_unread=only_unread,
+                only_archived=only_archived,
+                only_newsletter=only_newsletter,
+                with_labels=with_labels,
+                anchor_chat_id=anchor_chat_id,
+                ignore_group_metadata=ignore_group_metadata,
             )
         )
         return [ChatModelAPI.from_dict(c) for c in (raw_list or [])]
@@ -87,4 +93,3 @@ class ChatApiManager:
             chat_id: The chat to mark as read.
         """
         return await self._bridge._evaluate_stealth(WAJS_Scripts.mark_is_read(chat_id))
-

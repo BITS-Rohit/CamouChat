@@ -239,7 +239,9 @@ class MessageApiManager:
         if b64 is None:
             # Fallback: CDN download (NETWORK)
             if not msg_id:
-                self.log.warning("decrypt_media: Cache miss & no msg_id passed. Cannot use CDN fallback.")
+                self.log.warning(
+                    "decrypt_media: Cache miss & no msg_id passed. Cannot use CDN fallback."
+                )
                 return None
 
             self.log.info(f"decrypt_media: Cache miss for {direct_path!r} — CDN fallback [NETWORK]")
@@ -258,15 +260,29 @@ class MessageApiManager:
         return raw_bytes
 
     _MIME_TO_EXT: Dict[str, str] = {
-        "image/jpeg": ".jpg", "image/png": ".png", "image/webp": ".webp", "image/gif": ".gif",
-        "video/mp4": ".mp4", "video/3gpp": ".3gp", "video/quicktime": ".mov",
-        "audio/ogg": ".ogg", "audio/mp4": ".m4a", "audio/mpeg": ".mp3", "audio/aac": ".aac",
-        "application/pdf": ".pdf", "application/zip": ".zip",
+        "image/jpeg": ".jpg",
+        "image/png": ".png",
+        "image/webp": ".webp",
+        "image/gif": ".gif",
+        "video/mp4": ".mp4",
+        "video/3gpp": ".3gp",
+        "video/quicktime": ".mov",
+        "audio/ogg": ".ogg",
+        "audio/mp4": ".m4a",
+        "audio/mpeg": ".mp3",
+        "audio/aac": ".aac",
+        "application/pdf": ".pdf",
+        "application/zip": ".zip",
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document": ".docx",
     }
 
     _TYPE_EXT_FALLBACK: Dict[str, str] = {
-        "image": ".jpg", "video": ".mp4", "audio": ".ogg", "ptt": ".ogg", "sticker": ".webp", "document": ".bin",
+        "image": ".jpg",
+        "video": ".mp4",
+        "audio": ".ogg",
+        "ptt": ".ogg",
+        "sticker": ".webp",
+        "document": ".bin",
     }
 
     @staticmethod
@@ -282,7 +298,12 @@ class MessageApiManager:
     def media_save_path(message: MessageModelAPI, save_dir: str) -> str:
         """Auto-generate a filesystem path for a media message."""
         ext = MessageApiManager._ext_from_mime(message.mimetype, message.MsgType or "media")
-        safe_id = (message.id_serialized or "unknown").replace("/", "_").replace("@", "_").replace(":", "_")
+        safe_id = (
+            (message.id_serialized or "unknown")
+            .replace("/", "_")
+            .replace("@", "_")
+            .replace(":", "_")
+        )
         return str(Path(save_dir) / f"{message.MsgType or 'media'}_{safe_id}{ext}")
 
     async def extract_media(
@@ -307,9 +328,15 @@ class MessageApiManager:
         msg_id = message.id_serialized
 
         result: Dict[str, Any] = {
-            "success": False, "type": media_type, "mimetype": message.mimetype,
-            "size_bytes": None, "path": None, "msg_id": msg_id,
-            "view_once": message.isViewOnce, "used_fallback": False, "error": None,
+            "success": False,
+            "type": media_type,
+            "mimetype": message.mimetype,
+            "size_bytes": None,
+            "path": None,
+            "msg_id": msg_id,
+            "view_once": message.isViewOnce,
+            "used_fallback": False,
+            "error": None,
         }
 
         if not direct_path:
@@ -319,7 +346,9 @@ class MessageApiManager:
         b64 = None
         if media_key_b64:
             b64 = await self._bridge._evaluate_stealth(
-                WAJS_Scripts.decrypt_media(direct_path=direct_path, media_key_b64=media_key_b64, media_type=media_type)
+                WAJS_Scripts.decrypt_media(
+                    direct_path=direct_path, media_key_b64=media_key_b64, media_type=media_type
+                )
             )
 
         if b64 is None:
@@ -374,4 +403,6 @@ class MessageApiManager:
         Pure API text send. Sends the message entirely over the network.
         Use only when Playwright UI interaction logic is bypassing the actual input field.
         """
-        return await self._bridge._evaluate_stealth(WAJS_Scripts.send_text_message(chat_id, message))
+        return await self._bridge._evaluate_stealth(
+            WAJS_Scripts.send_text_message(chat_id, message)
+        )
